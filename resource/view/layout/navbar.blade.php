@@ -11,7 +11,7 @@
     <!-- Left navbar links -->
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+            <a id="nav_sidebar_collapse" class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="/admin" class="nav-link">{{ trans('admin.home') }}</a>
@@ -43,7 +43,7 @@
                     <img src="{{ $data['_user']['avatar'] ?? '' }}" class="img img-circle" alt="{{ $data['_user']['name'] ?? 'User Image' }}">
                     <p>
                         {{ $data['_user']['name'] ?? '' }}
-                        <small>{{ trans('admin.register_time') }}: {{ $data['_user']['updated_at'] }} </small>
+                        <small>{{ trans('admin.register_time') }}: {{ $data['_user']['update_time'] }} </small>
                     </p>
                 </li>
                 <li class="user-footer">

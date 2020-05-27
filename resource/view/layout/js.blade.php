@@ -35,5 +35,7 @@
 <!-- Toastr -->
 <script src="/vendor/hyperf-admin/AdminLTE/plugins/toastr/toastr.min.js"></script>
 <script src="/vendor/hyperf-admin/AdminLTE/plugins/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+<!-- bs-custom-file-input -->
+<script src="/vendor/hyperf-admin/AdminLTE/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/vendor/hyperf-admin/AdminLTE/dist/js/adminlte.min.js"></script>

@@ -19,5 +19,10 @@ return [
     'input'         => 'Input',
     'create'        => 'Create',
     'save'          => 'Save',
+    'delete'        => 'Delete',
     'new'           => 'New',
+    'show'          => 'Show',
+    'view'          => 'View',
+    'select'        => 'Select',
+    'list'          => 'List',
 ];

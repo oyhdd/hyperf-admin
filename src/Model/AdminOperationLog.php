@@ -14,6 +14,13 @@ namespace Oyhdd\Admin\Model;
  */
 class AdminOperationLog extends BaseModel
 {
+    public static $methodColors = [
+        'GET'    => 'success',
+        'POST'   => 'warning',
+        'PUT'    => 'primary',
+        'DELETE' => 'danger',
+    ];
+
     /**
      * The table associated with the model.
      *
@@ -25,11 +32,16 @@ class AdminOperationLog extends BaseModel
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['user_id', 'path', 'method', 'ip', 'input', 'create_time', 'update_time'];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
     protected $casts = ['id' => 'integer', 'user_id' => 'integer', 'create_time' => 'datetime', 'update_time' => 'datetime'];
+
+    public function user()
+    {
+        return $this->hasOne(AdminUser::class, 'id', 'user_id');
+    }
 }

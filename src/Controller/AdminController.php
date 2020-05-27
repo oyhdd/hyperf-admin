@@ -81,7 +81,7 @@ class AdminController
 
         $uri = $this->request->getPathInfo();
         $data['_menu'] = AdminMenu::getMenuTree($uri);
-        $data['_path'] = $this->request->path();
+        $data['_path'] = '/'.$this->request->path();
         return $this->render->render($view, compact('data'));
     }
 
@@ -140,5 +140,4 @@ class AdminController
     {
         return $this->response->redirect($toUrl, $status, $schema);
     }
-
 }

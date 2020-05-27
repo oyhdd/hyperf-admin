@@ -60,7 +60,7 @@ class UserController extends AdminController
             return $this->response->redirect('/admin/user/logout');
         }
 
-        return $this->render('user.login', [], true);
+        return $this->render('admin.user.login', [], true);
     }
 
     /**
@@ -101,7 +101,7 @@ class UserController extends AdminController
         }
         $token = 'Bearer '.(string) $this->jwt->getToken(['id' => $userId, 'lock' => true]);
         $cookie = new Cookie('Authorization', $token);
-        return $this->render('user.lock', ['_user' => $user->toArray()], true)->withCookie($cookie);
+        return $this->render('admin.user.lock', ['_user' => $user->toArray()], true)->withCookie($cookie);
     }
 
     /**
@@ -207,6 +207,5 @@ class UserController extends AdminController
         $error = $this->request->getAttribute('error', '');
         return $this->render('common.500', ['error' => $error], true);
     }
-
 
 }

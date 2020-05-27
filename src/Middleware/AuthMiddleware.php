@@ -7,12 +7,15 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Oyhdd\Admin\Task\AdminOperationLogTask;
+use Hyperf\Utils\ApplicationContext;
 use Phper666\JwtAuth\Jwt;
 use Phper666\JwtAuth\Exception\TokenValidException;
 use Hyperf\Contract\SessionInterface;
 use Illuminate\Support\MessageBag;
 use Hyperf\Utils\Context;
 use Oyhdd\Admin\Model\AdminUser;
+use Oyhdd\Admin\Common\Log;
 
 class AuthMiddleware implements MiddlewareInterface
 {
@@ -66,14 +69,16 @@ class AuthMiddleware implements MiddlewareInterface
                 return $this->response->redirect('/admin/user/lock');
             }
 
+            // 记录操作日志
+            $container = ApplicationContext::getContainer();
+            $task = $container->get(AdminOperationLogTask::class);
+            $task->handle($userId, $request->getServerParams(), $request->getParsedBody());
+
             return $handler->handle($request);
         } catch (TokenValidException $e) {
             $this->session->forget('Authorization');
         } catch (\Throwable $t) {
-            $error = $t->getMessage();
-            var_dump($error);
-            $request = $request->withAttribute('error', $error);
-            Context::set(ServerRequestInterface::class, $request);
+            Log::error("Server Error", [sprintf('%s in %s:%s', $t->getMessage(), $t->getFile(), $t->getLine())]);
             return $this->response->redirect('/admin/user/error');
         }
 

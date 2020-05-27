@@ -3,7 +3,7 @@
 namespace Oyhdd\Admin\Model;
 
 use Hyperf\Database\Model\Relations\BelongsToMany;
-use Oyhdd\Admin\Model\AdminRole;
+use Oyhdd\Admin\Model\AdminRoleMenu;
 use Illuminate\Support\Arr;
 
 /**
@@ -30,7 +30,7 @@ class AdminMenu extends BaseModel
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['id', 'parent_id', 'order', 'title', 'icon', 'uri', 'permission', 'create_time', 'update_time'];
     /**
      * The attributes that should be cast to native types.
      *
@@ -38,14 +38,11 @@ class AdminMenu extends BaseModel
      */
     protected $casts = ['id' => 'integer', 'parent_id' => 'integer', 'order' => 'integer', 'create_time' => 'datetime', 'update_time' => 'datetime'];
 
-    protected $hidden = [
-        'password'
-    ];
 
     /**
      * A Menu belongs to many roles.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
     public function roles(): BelongsToMany
     {
@@ -68,7 +65,9 @@ class AdminMenu extends BaseModel
 
         $items = array_column($items, null, 'id');
         foreach ($items as $id => $item) {
-            $items[$id]['active'] = false;
+            if (!isset($items[$id]['active'])) {
+                $items[$id]['active'] = false;
+            }
             if ($uri == $item['uri']) {
                 $items[$id]['active'] = true;
             }
@@ -83,5 +82,33 @@ class AdminMenu extends BaseModel
         }
 
         return $tree;
+    }
+
+    /**
+     * Build options of select field in form.
+     *
+     * @param array  $nodes
+     * @param int    $parentId
+     * @param string $prefix
+     * @param string $space
+     *
+     * @return array
+     */
+    public static  function buildSelectOptions(array $menus = [], $level = 0): array
+    {
+        $options = [];
+        if (empty($menus)) {
+            $menus = self::getMenuTree();
+        }
+        $space = '&nbsp;&nbsp;';
+
+        foreach ($menus as $menu) {
+            $options[] = ['id' => $menu['id'], 'title' => str_repeat($space, $level*4).'┝'.$space.$menu['title']];
+            if (!empty($menu['children'])) {
+                $options = array_merge($options, self::buildSelectOptions($menu['children'], $level + 1));
+            }
+        }
+
+        return $options;
     }
 }

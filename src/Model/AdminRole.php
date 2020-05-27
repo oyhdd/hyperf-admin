@@ -25,7 +25,7 @@ class AdminRole extends BaseModel
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['name', 'slug'];
     /**
      * The attributes that should be cast to native types.
      *
@@ -40,6 +40,6 @@ class AdminRole extends BaseModel
      */
     public function permissions() : BelongsToMany
     {
-        return $this->belongsToMany(AdminPermission::class, 'admin_role_permission', 'role_id', 'permission_id');
+        return $this->belongsToMany(AdminPermission::class, 'admin_role_permissions', 'role_id', 'permission_id');
     }
 }

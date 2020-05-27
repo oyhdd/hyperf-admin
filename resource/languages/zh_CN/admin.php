@@ -19,5 +19,10 @@ return [
     'input'         => '输入',
     'create'        => '创建',
     'save'          => '保存',
+    'delete'        => '删除',
     'new'           => '新增',
+    'show'          => '显示',
+    'view'          => '查看',
+    'select'        => '选择',
+    'list'          => '列表',
 ];

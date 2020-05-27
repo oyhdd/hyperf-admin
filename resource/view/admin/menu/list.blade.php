@@ -2,6 +2,10 @@
     $level = !empty($level) ? $level : 0;
 @endphp
 
+<style type="text/css">
+    a.tree_branch_delete{ color:#d9534f}
+</style>
+
 <li style="margin-left: {{ 1 * $level }}rem;">
     <span>
         <i class="fas {{ $item['icon'] }}"></i>
@@ -36,7 +40,7 @@
                 $level += 2;
             @endphp
             @foreach($item['children'] as $item)
-                @include('menu._list', $item)
+                @include('admin.menu.list', $item)
             @endforeach
             @php
                 $level = $temp_level2;

@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/fontawesome-free/css/all.min.css">
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
 <!-- Ionicons -->
-<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+<link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/ionicons/2.0.1/css/ionicons.min.css">
 <!-- DataTables -->
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -33,6 +33,7 @@
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
 <!-- Theme style -->
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/dist/css/adminlte.min.css">
+
 <style type="text/css">
     label.asterisk:before {
         content: "* ";
@@ -44,5 +45,18 @@
     }
     .select2 {
         width: 100%
+    }
+    @media only screen and (min-width: 768px) {
+        .form-horizontal .control-label {
+            padding-top: 7px;
+            margin-bottom: 0;
+            text-align: right;
+        }
+    }
+    h3.card-title {
+        line-height: 2.2;
+    }
+    a.btn {
+        line-height: 1.78;
     }
 </style>
