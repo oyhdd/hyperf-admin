@@ -2,28 +2,38 @@
 
 namespace Oyhdd\Admin\Controller;
 
-use Hyperf\HttpServer\Annotation\Controller;
-use Hyperf\HttpServer\Annotation\RequestMapping;
-use Hyperf\Di\Annotation\Inject;
-use Oyhdd\Admin\Model\AdminUser;
-use Illuminate\Hashing\BcryptHasher;
-use Hyperf\HttpServer\Annotation\Middleware;
-use Oyhdd\Admin\Middleware\AuthMiddleware;
-use Hyperf\HttpMessage\Cookie\Cookie;
-use Hyperf\Utils\Context;
+use Hyperf\HttpServer\Annotation\{Controller, RequestMapping, Middleware};
+use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Hyperf\HttpMessage\Cookie\Cookie;
+use Illuminate\Hashing\BcryptHasher;
+use Hyperf\Di\Annotation\Inject;
+use Hyperf\Utils\Context;
+use Oyhdd\Admin\Middleware\AuthMiddleware;
+use Oyhdd\Admin\Search\AdminUserSearch;
 
 /**
  * @Controller(prefix="admin/user")
  */
 class UserController extends AdminController
 {
+    /**
+     * @Inject
+     * @var AdminUserSearch
+     */
+    protected $adminUserSearch;
 
     /**
      * @Inject
      * @var BcryptHasher
      */
     protected $hash;
+
+    /**
+     * @Inject()
+     * @var ValidatorFactoryInterface
+     */
+    protected $validationFactory;
 
     /**
      * @RequestMapping(path="login")
@@ -41,7 +51,7 @@ class UserController extends AdminController
             $username = htmlspecialchars($this->request->input('username', ''));
             $password = htmlspecialchars($this->request->input('password', ''));
 
-            $user = AdminUser::where(['username' => $username, 'status' => AdminUser::STATUS_ENABLE])->first();
+            $user = AdminUserSearch::where(['username' => $username, 'status' => AdminUserSearch::STATUS_ENABLE])->first();
             if (!empty($user) && $this->hash->check($password, $user->password)) {
                 $token = 'Bearer '.(string) $this->jwt->getToken(['id' => $user->id]);
                 $cookie = new Cookie('Authorization', $token);
@@ -50,7 +60,7 @@ class UserController extends AdminController
             $this->admin_toastr("用户名或者密码错误", 'error', 0);
         } elseif ($tokenObj = $this->getTokenObj()) {
             $userId = $tokenObj->getClaim('id');
-            $user = AdminUser::where('id', $userId)->where('status', AdminUser::STATUS_ENABLE)->first();
+            $user = AdminUserSearch::where('id', $userId)->where('status', AdminUserSearch::STATUS_ENABLE)->first();
             if (empty($user)) {
                 $request = $this->request->withAttribute('user', $user);
                 Context::set(ServerRequestInterface::class, $request);
@@ -95,7 +105,7 @@ class UserController extends AdminController
         if (empty($tokenObj) || empty($userId = $tokenObj->getClaim('id', ''))) {
             return $this->response->redirect('/admin/user/login');
         }
-        $user = AdminUser::where('id', $userId)->where('status', AdminUser::STATUS_ENABLE)->first();
+        $user = AdminUserSearch::where('id', $userId)->where('status', AdminUserSearch::STATUS_ENABLE)->first();
         if (empty($user)) {
             return $this->response->redirect('/admin/user/login');
         }
@@ -118,7 +128,7 @@ class UserController extends AdminController
         if (empty($tokenObj) || empty($userId = $tokenObj->getClaim('id', ''))) {
             return $this->response->redirect('/admin/user/login');
         }
-        $user = AdminUser::find($userId);
+        $user = AdminUserSearch::find($userId);
         if (empty($user)) {
             return $this->response->redirect('/admin/user/login');
         }
@@ -199,13 +209,147 @@ class UserController extends AdminController
      * 
      * 错误跳转页
      * @author Eric
-     * @param  string   $exception
+     * @param  string   $error
      * @return array
      */
     public function error()
     {
-        $error = $this->request->getAttribute('error', '');
-        return $this->render('common.500', ['error' => $error], true);
+        $error = htmlspecialchars($this->request->input('error', ''));
+        return $this->render('common.error', ['error' => $error], true);
+    }
+
+    /**
+     * 
+     * @RequestMapping(path="", methods="get")
+     * @Middleware(AuthMiddleware::class)
+     * 
+     * Lists all models.
+     * @return mixed
+     */
+    public function index()
+    {
+        $params = $this->request->all();
+        $dataProvider = $this->adminUserSearch->search($params);
+
+        return $this->render('admin.user.index', [
+            'dataProvider' => $dataProvider,
+            'params'       => $params,
+        ]);
+    }
+
+    /**
+     * @RequestMapping(path="create")
+     * @Middleware(AuthMiddleware::class)
+     * 
+     * Creates a new model.
+     * @return mixed
+     */
+    public function create()
+    {
+        $model = new AdminUserSearch();
+        if ($this->request->isMethod('post')) {
+            $params = $this->request->all();
+            $validator = $this->validationFactory->make(
+                $params,
+                [
+                    'password' => 'required|min:6|confirmed',
+                    'username' => 'required',
+                    'name' => 'required',
+                ]
+            );
+            $params['password'] = $this->hash->make($params['password']);
+            if ($validator->fails()){
+                $this->admin_toastr($validator->errors()->first(), 'error', 5);
+            } elseif ($model->fill($params) && $model->save()) {
+                $model->roles()->sync($this->request->input('roles'));
+                $model->permissions()->sync($this->request->input('permissions'));
+                $this->admin_toastr("Create Success", 'success', 2);
+                return $this->redirect("admin/user");
+            }
+        }
+
+        return $this->render('admin.user.create', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * @RequestMapping(path="{id}/edit")
+     * @Middleware(AuthMiddleware::class)
+     * 
+     * Updates an existing model.
+     * @param  int $id
+     * @return mixed
+     */
+    public function edit($id)
+    {
+        $model = AdminUserSearch::findOrFail($id);
+
+        if ($this->request->isMethod('post')) {
+            $params = $this->request->all();
+            $validator = $this->validationFactory->make(
+                $params,
+                [
+                    'password' => 'required|min:6|confirmed',
+                    'username' => 'required',
+                    'name' => 'required',
+                ]
+            );
+            if ($validator->fails()){
+                $this->admin_toastr($validator->errors()->first(), 'error', 5);
+            } else {
+                if ($params['password'] != $model->password) {
+                    $params['password'] = $this->hash->make($params['password']);
+                }
+                if ($model->fill($params) && $model->save()) {
+                    $model->roles()->sync($this->request->input('roles'));
+                    $model->permissions()->sync($this->request->input('permissions'));
+                    $this->admin_toastr("Edit Success", 'success', 2);
+                    return $this->redirect("admin/user/{$id}");
+                }
+            }
+        }
+
+        return $this->render('admin.user.edit', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * @RequestMapping(path="{id}", methods="get")
+     * @Middleware(AuthMiddleware::class)
+     * 
+     * Displays a single model.
+     * @author Eric
+     * @param  int $id
+     * @return mixed
+     */
+    public function show(int $id)
+    {
+        $model = AdminUserSearch::findOrFail($id);
+
+        return $this->render('admin.user.show', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * @RequestMapping(path="{id}/delete", methods="post")
+     * @Middleware(AuthMiddleware::class)
+     * 
+     * Deletes an existing model.
+     * @param  int $id
+     * @return mixed
+     */
+    public function delete($id)
+    {
+        if ($id != 1 && AdminUserSearch::where('id', $id)->delete()) {
+            $this->admin_toastr("Delete Success", 'success', 2);
+        } else {
+            $this->admin_toastr("Delete Fail", 'error', 5);
+        }
+
+        return $this->response();
     }
 
 }

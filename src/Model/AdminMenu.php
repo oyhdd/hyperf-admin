@@ -55,7 +55,7 @@ class AdminMenu extends BaseModel
      * @param  string   $uri
      * @return array
      */
-    public static function getMenuTree(string $uri = ''): array
+    public static function getMenuTree(string $uri = '', $user = null): array
     {
         $tree = [];
         $items = AdminMenu::orderBy('order')->get()->toArray();
@@ -63,6 +63,14 @@ class AdminMenu extends BaseModel
             return $tree;
         }
 
+        if (!empty($user)) {
+            $patterns = $user->permissions()->get()->pluck('http_path')->toArray();
+            foreach ($items as $key => $item) {
+                if (!self::isValidaUrl($patterns, $item['uri'])) {
+                    unset($items[$key]);
+                }
+            }
+        }
         $items = array_column($items, null, 'id');
         foreach ($items as $id => $item) {
             if (!isset($items[$id]['active'])) {
@@ -81,6 +89,11 @@ class AdminMenu extends BaseModel
             }
         }
 
+        foreach ($tree as $key => $value) {
+            if (empty($value['children']) && empty($value['uri'] && empty($value['parent_id']))) {
+                unset($tree[$key]);
+            }
+        }
         return $tree;
     }
 

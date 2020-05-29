@@ -1,6 +1,6 @@
 <?php
 
-$title = '角色列表';
+$title = '权限列表';
 $description = 'show';
 $breadcrumb[] = ['text' => $title, 'url' => str_replace("/{$model->id}", '', $_path)];
 $breadcrumb[] = ['text' => '详情'];
@@ -30,13 +30,24 @@ $breadcrumb[] = ['text' => '详情'];
             'attribute' => 'slug'
         ],
         [
-            'label' => '权限',
+            'label' => '请求方法',
             'value' => function ($model) {
-                $html = "";
-                foreach ($model->permissions as $permission) {
-                    $html .= "<span class='badge bg-success'>{$permission->name}</span>&nbsp;";
+                $httpMethods = explode(',', trim($model->http_method, ','));
+                $label = "";
+                foreach ($httpMethods as $http_method) {
+                    if (empty($http_method)) {
+                        $label = "<span class='badge bg-primary'>ANY</span>&nbsp";
+                    } else {
+                        $label .= "<span class='badge bg-primary'>{$http_method}</span>&nbsp";
+                    }
                 }
-                return $html;
+                return $label;
+            }
+        ],
+        [
+            'label' => '路由',
+            'value' => function ($model) {
+                return str_replace(["\r\n", "\n", "\r", ","], '<br>', $model->http_path);
             }
         ],
         [

@@ -69,7 +69,7 @@ class AdminTableSeeder extends Seeder
                 'name'        => 'Auth management',
                 'slug'        => 'auth.management',
                 'http_method' => '',
-                'http_path'   => "/admin/roles\r\n/admin/permissions\r\n/admin/menu\r\n/admin/logs",
+                'http_path'   => "/admin/role\r\n/admin/permission\r\n/admin/menu\r\n/admin/log",
             ],
         ]);
 
@@ -102,21 +102,21 @@ class AdminTableSeeder extends Seeder
                 'order'     => 3,
                 'title'     => '用户管理',
                 'icon'      => 'fa-users',
-                'uri'       => '/admin/users',
+                'uri'       => '/admin/user',
             ],
             [
                 'parent_id' => 2,
                 'order'     => 4,
                 'title'     => '角色管理',
                 'icon'      => 'fa-user',
-                'uri'       => '/admin/roles',
+                'uri'       => '/admin/role',
             ],
             [
                 'parent_id' => 2,
                 'order'     => 5,
                 'title'     => '权限管理',
                 'icon'      => 'fa-ban',
-                'uri'       => '/admin/permissions',
+                'uri'       => '/admin/permission',
             ],
             [
                 'parent_id' => 2,
@@ -130,7 +130,7 @@ class AdminTableSeeder extends Seeder
                 'order'     => 7,
                 'title'     => '操作记录',
                 'icon'      => 'fa-history',
-                'uri'       => '/admin/logs',
+                'uri'       => '/admin/log',
             ],
         ]);
 

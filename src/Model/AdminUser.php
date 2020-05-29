@@ -29,7 +29,7 @@ class AdminUser extends BaseModel
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['username', 'password', 'name', 'avatar', 'remember_token'];
     /**
      * The attributes that should be cast to native types.
      *
@@ -37,7 +37,7 @@ class AdminUser extends BaseModel
      */
     protected $casts = ['id' => 'integer', 'create_time' => 'datetime', 'update_time' => 'datetime'];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['remember_token'];
 
     /**
      * A user has and belongs to many roles.
@@ -46,7 +46,7 @@ class AdminUser extends BaseModel
      */
     public function roles() : BelongsToMany
     {
-        return $this->belongsToMany(AdminRole::class, 'admin_role_user', 'user_id', 'role_id');
+        return $this->belongsToMany(AdminRole::class, 'admin_role_users', 'user_id', 'role_id');
     }
 
     /**
@@ -56,6 +56,6 @@ class AdminUser extends BaseModel
      */
     public function permissions() : BelongsToMany
     {
-        return $this->belongsToMany(AdminPermission::class, 'admin_user_permission', 'user_id', 'permission_id');
+        return $this->belongsToMany(AdminPermission::class, 'admin_user_permissions', 'user_id', 'permission_id');
     }
 }

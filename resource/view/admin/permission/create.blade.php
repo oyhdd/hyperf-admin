@@ -1,12 +1,9 @@
 <?php
 
-$title = '角色列表';
+$title = '权限列表';
 $description = 'show';
 $breadcrumb[] = ['text' => $title, 'url' => str_replace("/create", '', $_path)];
 $breadcrumb[] = ['text' => '创建'];
-
-$permissions = \Oyhdd\Admin\Model\AdminPermission::all()->pluck('name', 'id')->toArray();
-$selected = array_column($model->permissions->toArray(), 'id');
 
 $form = new \Oyhdd\Admin\Model\Widget\Form($model);
 ?>
@@ -21,7 +18,8 @@ $form = new \Oyhdd\Admin\Model\Widget\Form($model);
     'attributes' => [
         $form->text('name', '名称')->rules('required'),
         $form->text('slug', '标识')->rules('required'),
-        $form->listbox('permissions', '权限')->options($permissions, $selected),
+        $form->multipleSelect('http_method', '请求方式')->options($model->getHttpMethodsOptions(), explode(',', $model->http_method)),
+        $form->textarea('http_path', '路径'),
     ]
 ])
 

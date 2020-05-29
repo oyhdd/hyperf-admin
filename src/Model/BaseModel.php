@@ -3,11 +3,10 @@
 namespace Oyhdd\Admin\Model;
 
 use Hyperf\DbConnection\Model\Model;
-use Oyhdd\Admin\Model\Action\Form;
+use Hyperf\Utils\Str;
 
 class BaseModel extends Model
 {
-    use Form;
 
     /**
      * The name of the "created at" column.
@@ -55,5 +54,24 @@ class BaseModel extends Model
             return false;
         }
         return parent::fill($attributes);
+    }
+
+    /**
+     * Determine if the current request URI matches a pattern.
+     *
+     * @param mixed ...$patterns
+     */
+    public static function isValidaUrl(array $patterns = ['*'], string $url = ''): bool
+    {
+        if (empty($url)) {
+            return true;
+        }
+        foreach ($patterns as $pattern) {
+            if (Str::is($pattern, rawurldecode($url))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

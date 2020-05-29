@@ -10,7 +10,7 @@
             </div>
             <form role="form" class="form-horizontal" method="post" enctype="multipart/form-data" {{ isset($action) ? "action='{$action}'" : '' }}>
                 <div class="card-body">
-                    @foreach($model->formData as $column => $attribute)
+                    @foreach($form as $column => $attribute)
                     @if(isset($attribute['label']) && isset($attribute['input']))
                     <div class="form-group row">
                         {!! $attribute['label'] !!}
@@ -20,6 +20,7 @@
                     </div>
                     @endif
                     @endforeach
+                    
                 </div>
                 <div class="card-footer">
                     <div class="col-sm-10">

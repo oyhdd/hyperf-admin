@@ -15,7 +15,7 @@
                     <label class="control-label col-form-label text-right col-sm-3">{{ $attribute['label'] ?? $attribute }}</label>
                     <div class="input-group col-sm-7">
                         @if (isset($attribute['value']))
-                        <pre type="text" class="form-control">{!! $attribute['value']($model) !!}</pre>
+                        <pre type="text" class="form-control" style="height: auto;">{!! $attribute['value']($model) !!}</pre>
                         @else
                         <input type="text" class="form-control bg-white" disabled="disabled" value="{{ $model->{$attribute['attribute'] ?? $attribute} ?? '' }}">
                         @endif

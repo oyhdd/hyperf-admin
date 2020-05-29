@@ -1,6 +1,6 @@
 <?php
 
-$title = '用户列表';
+$title = '权限';
 $description = 'index';
 $breadcrumb[] = ['text' => $title];
 
@@ -20,41 +20,37 @@ $breadcrumb[] = ['text' => $title];
     'action' => [
         'view',
         'edit',
-        function ($model) {
-            if ( $model->id != 1) {
-                return "<a href='javascript:void(0);' data-id='{{ $model->id }}' class='text-danger grid-row-delete' title='删除'><i class='fas fa-trash'></i></a>";
-            }
-            return '';
-        }
+        'delete',
     ],
     'columns' => [
         'id',
-        [
-            'label' => '用户名',
-            'attribute' => 'username'
-        ],
         [
             'label' => '名称',
             'attribute' => 'name'
         ],
         [
-            'label' => '角色',
+            'label' => '标识',
+            'attribute' => 'slug'
+        ],
+        [
+            'label' => '请求方法',
             'value' => function ($model) {
-                $html = "";
-                foreach ($model->roles as $role) {
-                    $html .= "<span class='badge bg-success'>{$role->name}</span>&nbsp;";
+                $httpMethods = explode(',', trim($model->http_method, ','));
+                $label = "";
+                foreach ($httpMethods as $http_method) {
+                    if (empty($http_method)) {
+                        $label = "<span class='badge bg-primary'>ANY</span>&nbsp";
+                    } else {
+                        $label .= "<span class='badge bg-primary'>{$http_method}</span>&nbsp";
+                    }
                 }
-                return $html;
+                return $label;
             }
         ],
         [
-            'label' => '权限',
+            'label' => '路由',
             'value' => function ($model) {
-                $html = "";
-                foreach ($model->permissions as $permission) {
-                    $html .= "<span class='badge bg-success'>{$permission->name}</span>&nbsp;";
-                }
-                return $html;
+                return str_replace(["\r\n", "\n", "\r", ","], '<br>', $model->http_path);
             }
         ],
         [
@@ -72,7 +68,7 @@ $breadcrumb[] = ['text' => $title];
     $(function () {
         // $.dataTablesSettings.searching = true;
         $.dataTablesSettings.columnDefs = [{
-            'targets' : [6],
+            'targets' : [7],
             'orderable' : false
         }];
 

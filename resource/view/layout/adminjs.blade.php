@@ -1,7 +1,10 @@
-@if(!empty($data['_user']) && !empty($data['_user']['customize_style']))
-    @php
+@php
+    if (!empty($data['_user']) && !empty($data['_user']['customize_style'])) {
         $customize_style = $data['_user']['customize_style'];
-    @endphp
+    } else {
+        $customize_style = '{}';
+    }
+@endphp
 
 <script type="text/javascript">
     $(function () {
@@ -54,6 +57,5 @@
         });
     }
 </script>
-@endif
 
 <script src="/vendor/hyperf-admin/AdminLTE/dist/js/hyperf-admin.js"></script>

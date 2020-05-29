@@ -8,7 +8,7 @@ use Oyhdd\Admin\Search\AdminOperationLogSearch;
 use Hyperf\Di\Annotation\Inject;
 
 /**
- * @Controller(prefix="admin/logs")
+ * @Controller(prefix="admin/log")
  * @Middleware(AuthMiddleware::class)
  */
 class LogController extends AdminController

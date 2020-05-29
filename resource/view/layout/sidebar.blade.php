@@ -10,7 +10,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="{{ $data['_user']['avatar'] ?? '' }}" class="img-circle elevation-2" alt="{{ $data['_user']['name'] ?? 'User Image' }}">
+                <img src="{{ empty($data['_user']['avatar']) ? config('admin.default_avatar') : $data['_user']['avatar'] }}" class="img-circle elevation-2" alt="{{ $data['_user']['name'] ?? 'User Image' }}">
             </div>
             <div class="info">
                 <a class="d-block">{{ $data['_user']['name'] ?? '' }}</a>

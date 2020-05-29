@@ -3,17 +3,18 @@
 namespace Oyhdd\Admin\Middleware;
 
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
+use Hyperf\Utils\ApplicationContext;
+use Hyperf\HttpMessage\Stream\SwooleStream;
+use Hyperf\Contract\SessionInterface;
+use Hyperf\Utils\Context;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Oyhdd\Admin\Task\AdminOperationLogTask;
-use Hyperf\Utils\ApplicationContext;
+use Illuminate\Support\MessageBag;
 use Phper666\JwtAuth\Jwt;
 use Phper666\JwtAuth\Exception\TokenValidException;
-use Hyperf\Contract\SessionInterface;
-use Illuminate\Support\MessageBag;
-use Hyperf\Utils\Context;
+use Oyhdd\Admin\Task\AdminOperationLogTask;
 use Oyhdd\Admin\Model\AdminUser;
 use Oyhdd\Admin\Common\Log;
 
@@ -78,8 +79,10 @@ class AuthMiddleware implements MiddlewareInterface
         } catch (TokenValidException $e) {
             $this->session->forget('Authorization');
         } catch (\Throwable $t) {
-            Log::error("Server Error", [sprintf('%s in %s:%s', $t->getMessage(), $t->getFile(), $t->getLine())]);
-            return $this->response->redirect('/admin/user/error');
+            $error = sprintf('%s in %s:%s', $t->getMessage(), $t->getFile(), $t->getLine());
+            Log::error("Server Error", [$error]);
+
+            return $this->response->redirect("/admin/user/error?error=".$error);
         }
 
         return $this->response->redirect('/admin/user/login');

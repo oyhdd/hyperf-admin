@@ -3,21 +3,21 @@
 namespace Oyhdd\Admin\Controller;
 
 use Hyperf\HttpServer\Annotation\{Controller, RequestMapping, Middleware};
-use Oyhdd\Admin\Middleware\AuthMiddleware;
-use Oyhdd\Admin\Search\AdminRoleSearch;
 use Hyperf\Di\Annotation\Inject;
+use Oyhdd\Admin\Middleware\AuthMiddleware;
+use Oyhdd\Admin\Search\AdminPermissionSearch;
 
 /**
- * @Controller(prefix="admin/role")
+ * @Controller(prefix="admin/permission")
  * @Middleware(AuthMiddleware::class)
  */
-class RoleController extends AdminController
+class PermissionController extends AdminController
 {
     /**
      * @Inject
-     * @var AdminRoleSearch
+     * @var AdminPermissionSearch
      */
-    protected $adminRoleSearch;
+    protected $adminPermissionSearch;
 
     /**
      * @RequestMapping(path="", methods="get")
@@ -28,9 +28,9 @@ class RoleController extends AdminController
     public function index()
     {
         $params = $this->request->all();
-        $dataProvider = $this->adminRoleSearch->search($params);
+        $dataProvider = $this->adminPermissionSearch->search($params);
 
-        return $this->render('admin.role.index', [
+        return $this->render('admin.permission.index', [
             'dataProvider' => $dataProvider,
             'params'       => $params,
         ]);
@@ -44,15 +44,14 @@ class RoleController extends AdminController
      */
     public function create()
     {
-        $model = new AdminRoleSearch();
+        $model = new AdminPermissionSearch();
 
         if ($model->fill($this->request->all()) && $model->save()) {
-            $model->permissions()->sync($this->request->input('permissions'));
             $this->admin_toastr("Create Success", 'success', 2);
-            return $this->redirect("admin/role");
+            return $this->redirect("admin/permission");
         }
 
-        return $this->render('admin.role.create', [
+        return $this->render('admin.permission.create', [
             'model' => $model,
         ]);
     }
@@ -66,15 +65,14 @@ class RoleController extends AdminController
      */
     public function edit($id)
     {
-        $model = AdminRoleSearch::findOrFail($id);
+        $model = AdminPermissionSearch::findOrFail($id);
 
         if ($model->fill($this->request->all()) && $model->save()) {
-            $model->permissions()->sync($this->request->input('permissions'));
             $this->admin_toastr("Edit Success", 'success', 2);
-            return $this->redirect("admin/role/{$id}");
+            return $this->redirect("admin/permission/{$id}");
         }
 
-        return $this->render('admin.role.edit', [
+        return $this->render('admin.permission.edit', [
             'model' => $model,
         ]);
     }
@@ -89,9 +87,9 @@ class RoleController extends AdminController
      */
     public function show(int $id)
     {
-        $model = AdminRoleSearch::findOrFail($id);
+        $model = AdminPermissionSearch::findOrFail($id);
 
-        return $this->render('admin.role.show', [
+        return $this->render('admin.permission.show', [
             'model' => $model,
         ]);
     }
@@ -105,7 +103,7 @@ class RoleController extends AdminController
      */
     public function delete($id)
     {
-        if (AdminRoleSearch::where('id', $id)->delete()) {
+        if (AdminPermissionSearch::where('id', $id)->delete()) {
             $this->admin_toastr("Delete Success", 'success', 2);
         } else {
             $this->admin_toastr("Delete Fail", 'error', 5);

@@ -79,9 +79,12 @@ class AdminController
             }
         }
 
-        $uri = $this->request->getPathInfo();
-        $data['_menu'] = AdminMenu::getMenuTree($uri);
-        $data['_path'] = '/'.$this->request->path();
+        if (!empty($user)) {
+            $uri = $this->request->getPathInfo();
+            $data['_menu'] = AdminMenu::getMenuTree($uri, $user);
+            $data['_path'] = '/'.$this->request->path();
+        }
+
         return $this->render->render($view, compact('data'));
     }
 

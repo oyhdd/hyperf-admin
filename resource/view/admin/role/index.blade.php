@@ -10,7 +10,7 @@ $breadcrumb[] = ['text' => $title];
 
 <!-- 工具框 -->
 @section('card-tools')
-<a class='btn btn-success float-right' href="{{ $_path }}/create"><i class="fa fa-plus"></i> {{ trans('admin.create') }}</a>
+<a class='btn btn-success' href="{{ $_path }}/create"><i class="fa fa-plus"></i> {{ trans('admin.create') }}</a>
 @endsection
 
 <!-- 列表 -->
@@ -57,7 +57,7 @@ $breadcrumb[] = ['text' => $title];
     $(function () {
         // $.dataTablesSettings.searching = true;
         $.dataTablesSettings.columnDefs = [{
-            'targets' : [5],
+            'targets' : [6],
             'orderable' : false
         }];
 

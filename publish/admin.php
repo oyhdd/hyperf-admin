@@ -34,6 +34,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | The default avatar of current user.
+    |--------------------------------------------------------------------------
+    */
+    'default_avatar' => '/vendor/hyperf-admin/AdminLTE/dist/img/user2-160x160.jpg',
+
+    /*
+    |--------------------------------------------------------------------------
     | Login page background image
     |--------------------------------------------------------------------------
     |
@@ -70,4 +77,33 @@ return [
     |--------------------------------------------------------------------------
     */
     'version' => '1.0.1',
+
+    /*
+    |--------------------------------------------------------------------------
+    | User operation log setting
+    |--------------------------------------------------------------------------
+    |
+    | By setting this option to open or close operation log in laravel-admin.
+    |
+    */
+    'operation_log' => [
+
+        'enable' => true,
+
+        /*
+         * Only logging allowed methods in the list
+         */
+        // 'allowed_methods' => ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH'],
+        'allowed_methods' => ['POST', 'PUT', 'DELETE'],
+
+        /*
+         * Routes that will not log to database.
+         *
+         * All method to path like: /admin/log
+         * or /admin/log*
+         */
+        'except' => [
+            'admin/log*',
+        ],
+    ],
 ];

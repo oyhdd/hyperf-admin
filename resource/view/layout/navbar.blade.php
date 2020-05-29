@@ -35,12 +35,12 @@
         <!-- User Account Menu -->
         <li class="nav-item dropdown user-menu mt-1">
             <a data-toggle="dropdown" href="#">
-                <img src="{{ $data['_user']['avatar'] ?? ' ' }}" class="img-size-25 mr-2 ml-2 img-circle" alt="{{ $data['_user']['name'] ?? 'User Image' }}">
+                <img src="{{ empty($data['_user']['avatar']) ? config('admin.default_avatar') : $data['_user']['avatar'] }}" class="img-size-25 mr-2 ml-2 img-circle" alt="{{ $data['_user']['name'] ?? 'User Image' }}">
             </a>
 
             <ul class="dropdown-menu dropdown-menu-right">
                 <li class="user-header">
-                    <img src="{{ $data['_user']['avatar'] ?? '' }}" class="img img-circle" alt="{{ $data['_user']['name'] ?? 'User Image' }}">
+                    <img src="{{ empty($data['_user']['avatar']) ? config('admin.default_avatar') : $data['_user']['avatar'] }}" class="img img-circle" alt="{{ $data['_user']['name'] ?? 'User Image' }}">
                     <p>
                         {{ $data['_user']['name'] ?? '' }}
                         <small>{{ trans('admin.register_time') }}: {{ $data['_user']['update_time'] }} </small>
@@ -48,7 +48,7 @@
                 </li>
                 <li class="user-footer">
                     <div class="float-left">
-                        <a href="/admin/user/edit" class="btn btn-default btn-flat">{{ trans('admin.setting') }}</a>
+                        <a href="/admin/user/{{ $data['_user']['id'] }}/edit" class="btn btn-default btn-flat">{{ trans('admin.setting') }}</a>
                     </div>
                     <div class="float-right">
                         <a href="/admin/user/logout" class="btn btn-default btn-flat">{{ trans('admin.logout') }}</a>

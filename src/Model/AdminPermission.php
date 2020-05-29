@@ -24,11 +24,35 @@ class AdminPermission extends BaseModel
      *
      * @var array
      */
-    protected $fillable = [];
+    protected $fillable = ['name', 'slug', 'http_method', 'http_path'];
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
     protected $casts = ['id' => 'integer', 'create_time' => 'datetime', 'update_time' => 'datetime'];
+
+    /**
+     * @var array
+     */
+    public static $httpMethods = [
+        'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD',
+    ];
+
+    /**
+     * Get options of HTTP methods select field.
+     *
+     * @return array
+     */
+    public function getHttpMethodsOptions()
+    {
+        return array_combine(self::$httpMethods, self::$httpMethods);
+    }
+
+    public function setHttpMethodAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['http_method'] = implode(',', $value);
+        }
+    }
 }

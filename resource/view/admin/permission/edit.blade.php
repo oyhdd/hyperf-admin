@@ -1,12 +1,9 @@
 <?php
 
-$title = '角色列表';
+$title = '权限列表';
 $description = 'show';
 $breadcrumb[] = ['text' => $title, 'url' => str_replace("/{$model->id}/edit", '', $_path)];
 $breadcrumb[] = ['text' => '编辑'];
-
-$permissions = \Oyhdd\Admin\Model\AdminPermission::all()->pluck('name', 'id')->toArray();
-$selected = array_column($model->permissions->toArray(), 'id');
 
 $form = new \Oyhdd\Admin\Model\Widget\Form($model);
 ?>
@@ -20,6 +17,7 @@ $form = new \Oyhdd\Admin\Model\Widget\Form($model);
     <a href="javascript:void(0);" class="btn btn-danger ml-2 model-delete"><i class="fas fa-trash"></i> {{ trans('admin.delete') }}</a>
 @endsection
 
+
 <!-- 表单编辑 -->
 @include('common.edit', [
     // 'action' => $_path,
@@ -28,7 +26,8 @@ $form = new \Oyhdd\Admin\Model\Widget\Form($model);
         $form->display('id', 'Id'),
         $form->text('name', '名称')->rules('required'),
         $form->text('slug', '标识')->rules('required'),
-        $form->listbox('permissions', '权限')->options($permissions, $selected),
+        $form->multipleSelect('http_method', '请求方式')->options($model->getHttpMethodsOptions(), explode(',', $model->http_method)),
+        $form->textarea('http_path', '路径'),
         $form->display('create_time', '创建时间'),
         $form->display('update_time', '更新时间'),
     ]
