@@ -10,7 +10,7 @@ return [
     | login page.
     |
     */
-    'name' => '<span style="color:white"> 消息中心 </span>',
+    'name' => '<span class="text-white"> Hyperf Admin </span>',
 
     /*
     |--------------------------------------------------------------------------
@@ -20,7 +20,7 @@ return [
     | Html title for all pages.
     |
     */
-    'title' => 'Admin',
+    'title' => 'Hyperf Admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -56,7 +56,7 @@ return [
     |
     | This value is the layout of admin pages.
     |
-    | Supported: "sidebar-mini", "layout-boxed", "layout-fixed", "layout-navbar-fixed", "layout-footer-fixed"
+    | Supported: "sidebar-mini", "sidebar-collapse", "layout-boxed", "layout-fixed", "layout-navbar-fixed", "layout-footer-fixed"
     |
     */
     'layout' => ['sidebar-mini', 'layout-fixed', 'text-sm'],
@@ -104,6 +104,35 @@ return [
          */
         'except' => [
             'admin/log*',
+            'admin/user/setting*',
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hyperf-admin auth setting
+    |--------------------------------------------------------------------------
+    */
+    'auth' => [
+        // The URIs that should be excluded from authorization.
+        'excepts' => [
+            'admin',              // home
+            'admin/user/login',   // login
+            'admin/user/setting*',// user setting
+        ],
+    ],
+
+    'logger' => 'admin',
+
+    'page_size' => env('PAGE_SIZE', 10),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hyperf-admin footer setting
+    |--------------------------------------------------------------------------
+    */
+    'footer' => [
+        'show_memory_usage' => true,
+        'show_load_time' => true,
+    ]
 ];

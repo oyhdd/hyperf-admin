@@ -1,23 +1,22 @@
 <div class="row">
     <div class="col-lg-12">
-        <div class="card card-default">
+        <div class="card card-outline card-info">
             <div class="card-header">
                 <h3 class="card-title">{{ $form_title ?? trans('admin.show') }}</h3>
                 <div class="card-tools  mr-0">
                     <!-- 工具框 -->
                     @yield('card-tools')
                 </div>
-                <!-- /.card-tools -->
             </div>
-            <div class="card-body">
+            <div class="card-body form-horizontal">
                 @foreach($attributes as $attribute)
                 <div class="form-group row">
-                    <label class="control-label col-form-label text-right col-sm-3">{{ $attribute['label'] ?? $attribute }}</label>
+                    <label class="control-label col-form-label col-sm-3">{{ $attribute['label'] ?? $attribute }}</label>
                     <div class="input-group col-sm-7">
                         @if (isset($attribute['value']))
-                        <pre type="text" class="form-control" style="height: auto;">{!! $attribute['value']($model) !!}</pre>
+                            <pre type="text" class="form-control" style="height: auto;">{!! $attribute['value']($model) !!}</pre>
                         @else
-                        <input type="text" class="form-control bg-white" disabled="disabled" value="{{ $model->{$attribute['attribute'] ?? $attribute} ?? '' }}">
+                            <input type="text" class="form-control bg-white" disabled="disabled" value="{{ $model->{$attribute['attribute'] ?? $attribute} ?? '' }}">
                         @endif
                     </div>
                 </div>
@@ -35,7 +34,7 @@
             let list_url = '{{ str_replace('/'.$model->id, '', $_path) }}'
             Swal.fire({
                 type: 'warning', // 弹框类型
-                title: '确认删除该记录(id = {{ $model->id }})', // 标题
+                title: '确认删除该记录?', // 标题
                 // text: "删除后将无法恢复，请确认！", //显示内容
 
                 confirmButtonColor: '#DD6B55',// 确定按钮的 颜色
@@ -53,7 +52,15 @@
                                 window.location.href = list_url;
                             },
                             error: function(data) {
-                                Swal.fire('Error', '请求失败，请稍后重试！', 'error');
+                                Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 5000,
+                                }).fire({
+                                    type: "error",
+                                    title: data.responseText,
+                                })
                             }
                         });
                     }

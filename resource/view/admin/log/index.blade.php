@@ -1,10 +1,10 @@
 <?php
 
-$title = '操作日志';
-$description = 'index';
-$breadcrumb[] = ['text' => $title];
-
+    $title = '操作日志';
+    $description = 'index';
+    $breadcrumb[] = ['text' => $title];
 ?>
+
 <!-- 引入面包屑 -->
 @include('layout.breadcrumb', compact('title', 'description', 'breadcrumb'))
 
@@ -16,12 +16,15 @@ $breadcrumb[] = ['text' => $title];
 <!-- 列表 -->
 @include('common.table', [
     // 'dataProvider' => $dataProvider,
-    // '_path' => $_path,
+    // 'searchModel'  => $searchModel,
     'action' => [
         'delete'
     ],
     'columns' => [
-        'id',
+        [
+            'attribute' => 'id',
+            'sort' => 'id',
+        ],
         [
             'label' => '操作人',
             'value' => function ($model) {
@@ -52,24 +55,13 @@ $breadcrumb[] = ['text' => $title];
         ],
         [
             'attribute' => 'input',
-            'width' => 200,
+            'style' => 'word-wrap:break-word;word-break:break-all;',
+            'width' => 600,
         ],
         [
-            'attribute' => 'create_time',
             'label' => '创建时间',
+            'attribute' => 'create_time',
+            'sort' => 'create_time',
         ]
     ]
 ])
-
-@include('common.toastr')
-<script type="text/javascript">
-    $(function () {
-        $.dataTablesSettings.searching = true;
-        $.dataTablesSettings.columnDefs = [{
-            'targets' : [5],
-            'orderable' : false
-        }];
-
-        $(".admin-table").DataTable($.dataTablesSettings);
-    })
-</script>

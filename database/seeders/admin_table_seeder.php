@@ -20,64 +20,79 @@ class AdminTableSeeder extends Seeder
         AdminUser::create([
             'username' => 'admin',
             'password' => $hash->make('123456'),
-            'name'     => 'Administrator',
-            'avatar'   => '/vendor/hyperf-admin/AdminLTE/dist/img/user2-160x160.jpg',
+            'name'     => 'Admin',
         ]);
 
         // create a role.
         AdminRole::truncate();
-        AdminRole::create([
-            'name' => 'Administrator',
-            'slug' => 'administrator',
+        AdminRole::insert([
+            [
+                'name' => '超级管理员',
+                'slug' => 'root',
+            ],
+            [
+                'name' => '普通用户',
+                'slug' => 'user',
+            ],
         ]);
 
         // add role to user.
         AdminRoleUser::truncate();
-        AdminRoleUser::create([
-            'role_id' => 1,
-            'user_id' => 1,
+        AdminRoleUser::insert([
+            [
+                'role_id' => 1,
+                'user_id' => 1,
+            ],
+            [
+                'role_id' => 2,
+                'user_id' => 2,
+            ],
         ]);
 
         //create a permission
         AdminPermission::truncate();
         AdminPermission::insert([
             [
-                'name'        => 'All permission',
-                'slug'        => '*',
+                'name'        => '所有',
+                'slug'        => 'all',
                 'http_method' => '',
                 'http_path'   => '*',
             ],
             [
-                'name'        => 'Dashboard',
-                'slug'        => 'dashboard',
+                'name'        => '系统管理',
+                'slug'        => 'system.setting',
+                'http_method' => '',
+                'http_path'   => "admin/user\r\nadmin/role\r\nadmin/permission\r\nadmin/menu\r\nadmin/log",
+            ],
+            [
+                'name'        => '个人设置',
+                'slug'        => 'user.setting',
+                'http_method' => '',
+                'http_path'   => "admin/user/login\r\nadmin/user/setting*",
+            ],
+            [
+                'name'        => '首页',
+                'slug'        => 'home',
                 'http_method' => 'GET',
-                'http_path'   => '/admin',
-            ],
-            [
-                'name'        => 'Login',
-                'slug'        => 'auth.login',
-                'http_method' => '',
-                'http_path'   => "/admin/user/login\r\n/admin/user/logout",
-            ],
-            [
-                'name'        => 'User setting',
-                'slug'        => 'auth.setting',
-                'http_method' => 'GET,PUT',
-                'http_path'   => '/admin/user/setting',
-            ],
-            [
-                'name'        => 'Auth management',
-                'slug'        => 'auth.management',
-                'http_method' => '',
-                'http_path'   => "/admin/role\r\n/admin/permission\r\n/admin/menu\r\n/admin/log",
+                'http_path'   => 'admin',
             ],
         ]);
 
-        //add role to permission.
+        //add permission to role
         AdminRolePermission::truncate();
         AdminRolePermission::insert([
-            'role_id'       => 1,
-            'permission_id' => 1,
+            [
+                'role_id' => 1,
+                'permission_id' => 1,
+            ],
+            [
+                'role_id' => 2,
+                'permission_id' => 3,
+            ],
+            [
+                'role_id' => 2,
+                'permission_id' => 4,
+            ],
         ]);
 
         // add default menus.
@@ -136,10 +151,6 @@ class AdminTableSeeder extends Seeder
 
         // add role to menu.
         AdminRoleMenu::truncate();
-        AdminRoleMenu::create([
-            'role_id' => 1,
-            'menu_id' => 2,
-        ]);
-
+        AdminMenu::find(2)->roles()->save(AdminRole::first());
     }
 }

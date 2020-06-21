@@ -21,24 +21,27 @@ class PermissionController extends AdminController
 
     /**
      * @RequestMapping(path="", methods="get")
-     * 
+     *
      * Lists all models.
      * @return mixed
      */
     public function index()
     {
         $params = $this->request->all();
+
         $dataProvider = $this->adminPermissionSearch->search($params);
+        $searchModel = $this->adminPermissionSearch->searchForm($params);
 
         return $this->render('admin.permission.index', [
             'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
             'params'       => $params,
         ]);
     }
 
     /**
      * @RequestMapping(path="create")
-     * 
+     *
      * Creates a new model.
      * @return mixed
      */
@@ -58,7 +61,7 @@ class PermissionController extends AdminController
 
     /**
      * @RequestMapping(path="{id}/edit")
-     * 
+     *
      * Updates an existing model.
      * @param  int $id
      * @return mixed
@@ -66,8 +69,8 @@ class PermissionController extends AdminController
     public function edit($id)
     {
         $model = AdminPermissionSearch::findOrFail($id);
-
         if ($model->fill($this->request->all()) && $model->save()) {
+            $model->http_method = $this->request->input('http_method');
             $this->admin_toastr("Edit Success", 'success', 2);
             return $this->redirect("admin/permission/{$id}");
         }
@@ -79,9 +82,8 @@ class PermissionController extends AdminController
 
     /**
      * @RequestMapping(path="{id}", methods="get")
-     * 
+     *
      * Displays a single model.
-     * @author Eric
      * @param  int $id
      * @return mixed
      */
@@ -96,7 +98,7 @@ class PermissionController extends AdminController
 
     /**
      * @RequestMapping(path="{id}/delete", methods="post")
-     * 
+     *
      * Deletes an existing model.
      * @param  int $id
      * @return mixed

@@ -1,10 +1,11 @@
-@php
+<?php
+
     if (!empty($data['_user']) && !empty($data['_user']['customize_style'])) {
         $customize_style = $data['_user']['customize_style'];
     } else {
         $customize_style = '{}';
     }
-@endphp
+?>
 
 <script type="text/javascript">
     $(function () {
@@ -26,7 +27,10 @@
         }
 
         //Initialize Select2 Elements
-        $('.select2').select2()
+        $('.select2').select2({
+            placeholderOption: "first",
+            allowClear: true
+        })
 
         $('#nav_sidebar_collapse').click(function () {
             if ($("body").hasClass("sidebar-collapse")) {
@@ -42,7 +46,7 @@
             [class_name]: enable
         }
         $.ajax({
-            url: '/admin/user/saveCustomizeStyle',
+            url: '/admin/user/setting/saveCustomizeStyle',
             type: 'POST',
             data: {
                 selector: selector,
@@ -58,4 +62,4 @@
     }
 </script>
 
-<script src="/vendor/hyperf-admin/AdminLTE/dist/js/hyperf-admin.js"></script>
+<script src="/vendor/hyperf-admin/AdminLTE/dist/js/hyperf-admin.js?v={{ date("Ymd") }}"></script>

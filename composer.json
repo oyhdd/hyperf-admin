@@ -34,7 +34,8 @@
         "illuminate/hashing": "^6.5",
         "duncan3dc/blade": "^4.8",
         "hyperf/session": "^1.1",
-        "phper666/jwt-auth": "^2.0"
+        "phper666/jwt-auth": "^2.0",
+        "hyperf/validation": "^1.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",

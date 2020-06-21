@@ -1,4 +1,5 @@
-<button type="submit" class="btn btn-danger grid-row-delete-all float-right">全部删除</button><br>
+<button type="submit" class="btn btn-danger grid-row-delete-all float-right">全部删除</button>
+<br>
 
 <script type="text/javascript">
     $(function () {

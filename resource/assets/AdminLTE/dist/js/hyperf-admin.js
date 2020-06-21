@@ -207,7 +207,7 @@
         }
         saveCustomizeStyle(selector, class_name, enable, true)
     })
-    var $legacy_sidebar_container = $('<div />', { 'class': 'mb-1' }).append($fix_sidebar_checkbox).append('<span>全部固定<span style="color:#f33232">(将自动刷新)</span></span>')
+    var $legacy_sidebar_container = $('<div />', { 'class': 'mb-1' }).append($fix_sidebar_checkbox).append('<span>固定侧边栏<span style="color:#f33232">(将自动刷新)</span></span>')
     $container.append($legacy_sidebar_container)
 
     var $fix_navbar_checkbox = $('<input />', {
@@ -228,7 +228,7 @@
         }
         saveCustomizeStyle(selector, class_name, enable)
     })
-    var $fix_navbar_container = $('<div />', { 'class': 'mb-1 pl-3' }).append($fix_navbar_checkbox).append('<span>固定顶部导航栏</span>')
+    var $fix_navbar_container = $('<div />', { 'class': 'mb-1' }).append($fix_navbar_checkbox).append('<span>固定顶部导航栏</span>')
     $container.append($fix_navbar_container)
 
     var $fix_footer_checkbox = $('<input />', {
@@ -249,7 +249,7 @@
         }
         saveCustomizeStyle(selector, class_name, enable)
     })
-    var $fix_footer_container = $('<div />', { 'class': 'mb-1 pl-3' }).append($fix_footer_checkbox).append('<span>固定footer</span>')
+    var $fix_footer_container = $('<div />', { 'class': 'mb-1' }).append($fix_footer_checkbox).append('<span>固定footer</span>')
     $container.append($fix_footer_container)
 
     var $flat_sidebar_checkbox = $('<input />', {
@@ -601,7 +601,7 @@
             [class_name]: enable
         }
         $.ajax({
-            url: '/admin/user/saveCustomizeStyle',
+            url: '/admin/user/setting/saveCustomizeStyle',
             type: 'POST',
             data: {
                 selector: selector,
@@ -618,7 +618,7 @@
 
     function batchSaveCustomizeStyle(selector, styles) {
         $.ajax({
-            url: '/admin/user/saveCustomizeStyle',
+            url: '/admin/user/setting/saveCustomizeStyle',
             type: 'POST',
             data: {
                 selector: selector,
@@ -631,7 +631,7 @@
 
     function clearCustomizeStyle(selector) {
         $.ajax({
-            url: '/admin/user/clearCustomizeStyle',
+            url: '/admin/user/setting/clearCustomizeStyle',
             type: 'POST',
             data: {
                 selector: selector,

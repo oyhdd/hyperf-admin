@@ -3,21 +3,21 @@
 namespace Oyhdd\Admin\Model;
 
 use Hyperf\Database\Model\Relations\BelongsToMany;
-use Oyhdd\Admin\Model\AdminPermission;
-use Oyhdd\Admin\Model\AdminRole;
 
 /**
- * @property int $id 
- * @property string $username 
- * @property string $password 
- * @property string $name 
- * @property string $avatar 
- * @property string $remember_token 
- * @property \Carbon\Carbon $create_time 
- * @property \Carbon\Carbon $update_time 
+ * @property int $id
+ * @property string $username
+ * @property string $password
+ * @property string $name
+ * @property string $avatar
+ * @property string $remember_token
+ * @property \Carbon\Carbon $create_time
+ * @property \Carbon\Carbon $update_time
  */
 class AdminUser extends BaseModel
 {
+    use HasPermissions;
+
     /**
      * The table associated with the model.
      *

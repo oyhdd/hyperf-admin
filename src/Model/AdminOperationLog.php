@@ -3,14 +3,14 @@
 namespace Oyhdd\Admin\Model;
 
 /**
- * @property int $id 
- * @property int $user_id 
- * @property string $path 
- * @property string $method 
- * @property string $ip 
- * @property string $input 
- * @property \Carbon\Carbon $create_time 
- * @property \Carbon\Carbon $update_time 
+ * @property int $id
+ * @property int $user_id
+ * @property string $path
+ * @property string $method
+ * @property string $ip
+ * @property string $input
+ * @property \Carbon\Carbon $create_time
+ * @property \Carbon\Carbon $update_time
  */
 class AdminOperationLog extends BaseModel
 {

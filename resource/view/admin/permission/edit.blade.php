@@ -1,11 +1,11 @@
 <?php
 
-$title = '权限列表';
-$description = 'show';
-$breadcrumb[] = ['text' => $title, 'url' => str_replace("/{$model->id}/edit", '', $_path)];
-$breadcrumb[] = ['text' => '编辑'];
+    $title = '权限列表';
+    $description = 'show';
+    $breadcrumb[] = ['text' => $title, 'url' => str_replace("/{$model->id}/edit", '', $_path)];
+    $breadcrumb[] = ['text' => '编辑'];
 
-$form = new \Oyhdd\Admin\Model\Widget\Form($model);
+    $form = new \Oyhdd\Admin\Model\Widget\Form($model);
 ?>
 
 <!-- 引入面包屑 -->
@@ -19,15 +19,17 @@ $form = new \Oyhdd\Admin\Model\Widget\Form($model);
 
 
 <!-- 表单编辑 -->
-@include('common.edit', [
-    // 'action' => $_path,
+@include('common.form', [
     // 'form' => $form,
+    // 'action' => $_path,
     'attributes' => [
         $form->display('id', 'Id'),
         $form->text('name', '名称')->rules('required'),
         $form->text('slug', '标识')->rules('required'),
-        $form->multipleSelect('http_method', '请求方式')->options($model->getHttpMethodsOptions(), explode(',', $model->http_method)),
-        $form->textarea('http_path', '路径'),
+        $form->multipleSelect('http_method', '请求方式')
+            ->options($model->getHttpMethodsOptions(), explode(',', $model->http_method))
+            ->help('为空默认为所有方法'),
+        $form->textarea('http_path', '路径')->help('多个路径可使用逗号、空格或换行分隔'),
         $form->display('create_time', '创建时间'),
         $form->display('update_time', '更新时间'),
     ]

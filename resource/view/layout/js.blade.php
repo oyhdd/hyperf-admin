@@ -8,6 +8,7 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="/vendor/hyperf-admin/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/vendor/hyperf-admin/AdminLTE/plugins/bootstrap/js/bootstrap.min.js"></script>
 <!-- DataTables -->
 <script src="/vendor/hyperf-admin/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/vendor/hyperf-admin/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>

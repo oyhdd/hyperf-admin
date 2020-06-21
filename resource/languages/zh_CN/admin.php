@@ -23,6 +23,10 @@ return [
     'new'           => '新增',
     'show'          => '显示',
     'view'          => '查看',
+    'reset'         => '重置',
     'select'        => '选择',
     'list'          => '列表',
+    'deny'          => '无权访问',
+    'action'        => '操作',
+    'filter'        => '筛选',
 ];

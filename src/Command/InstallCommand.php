@@ -55,7 +55,7 @@ class InstallCommand extends HyperfCommand
     protected function initAdminDirectory()
     {
         if (is_dir($this->directory)) {
-            // return $this->line("<error>{$this->directory} directory already exists !</error> ");
+            return $this->line("<error>{$this->directory} directory already exists !</error> ");
         }
 
         $this->fileSystem->makeDirectory($this->directory, 0755, true, true);

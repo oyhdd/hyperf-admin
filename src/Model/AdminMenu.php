@@ -3,19 +3,18 @@
 namespace Oyhdd\Admin\Model;
 
 use Hyperf\Database\Model\Relations\BelongsToMany;
-use Oyhdd\Admin\Model\AdminRoleMenu;
 use Illuminate\Support\Arr;
 
 /**
- * @property int $id 
- * @property int $parent_id 
- * @property int $order 
- * @property string $title 
- * @property string $icon 
- * @property string $uri 
- * @property string $permission 
- * @property \Carbon\Carbon $create_time 
- * @property \Carbon\Carbon $update_time 
+ * @property int $id
+ * @property int $parent_id
+ * @property int $order
+ * @property string $title
+ * @property string $icon
+ * @property string $uri
+ * @property string $permission
+ * @property \Carbon\Carbon $create_time
+ * @property \Carbon\Carbon $update_time
  */
 class AdminMenu extends BaseModel
 {
@@ -58,24 +57,37 @@ class AdminMenu extends BaseModel
     public static function getMenuTree(string $uri = '', $user = null): array
     {
         $tree = [];
-        $items = AdminMenu::orderBy('order')->get()->toArray();
-        if (empty($items)) {
+        $items = AdminMenu::orderBy('order')->get();
+        if (empty($items->toArray())) {
             return $tree;
         }
 
         if (!empty($user)) {
-            $patterns = $user->permissions()->get()->pluck('http_path')->toArray();
+            $userPermissions = $user->allPermissions()->toArray();
+            $urlPatterns = array_column($userPermissions, 'http_path');
+            $urlPatterns = array_map(function ($http_path) {
+                return explode("\n", str_replace(["\r\n", " ", ","], "\n", $http_path));
+            }, $urlPatterns);
+            $slugPatterns = array_column($userPermissions, 'slug');
+
+            // 菜单权限校验
             foreach ($items as $key => $item) {
-                if (!self::isValidaUrl($patterns, $item['uri'])) {
-                    unset($items[$key]);
+                $item->active = false; //默认不激活
+                $item->has_permission = true; // 默认有权限
+                $menuPermissions = $item->allPermissions();
+                // 菜单未设置权限
+                if (empty($menuPermissions)) {
+                    continue;
+                }
+                // 用户无菜单权限
+                if (empty(array_intersect($menuPermissions, $slugPatterns))) {
+                    $item->has_permission = false;
                 }
             }
         }
+        $items = $items->toArray();
         $items = array_column($items, null, 'id');
         foreach ($items as $id => $item) {
-            if (!isset($items[$id]['active'])) {
-                $items[$id]['active'] = false;
-            }
             if ($uri == $item['uri']) {
                 $items[$id]['active'] = true;
             }
@@ -89,11 +101,6 @@ class AdminMenu extends BaseModel
             }
         }
 
-        foreach ($tree as $key => $value) {
-            if (empty($value['children']) && empty($value['uri'] && empty($value['parent_id']))) {
-                unset($tree[$key]);
-            }
-        }
         return $tree;
     }
 
@@ -124,4 +131,21 @@ class AdminMenu extends BaseModel
 
         return $options;
     }
+
+    /**
+     * Get all permissions of user.
+     *
+     * @return mixed
+     */
+    public function allPermissions()
+    {
+        $permissions = $this->roles()->with('permissions')->get()->pluck('permissions')->flatten()->toArray();
+        $rolesPermission = array_column($permissions, 'slug');
+        $permission = !empty($this->permission) ? [$this->permission] : [];
+        if (empty($permission) && empty($rolesPermission)) {
+            return [];
+        }
+        return array_merge($permission, $rolesPermission);
+    }
+
 }

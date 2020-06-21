@@ -3,10 +3,10 @@
 namespace Oyhdd\Admin\Model;
 
 /**
- * @property int $user_id 
- * @property int $permission_id 
- * @property \Carbon\Carbon $create_time 
- * @property \Carbon\Carbon $update_time 
+ * @property int $user_id
+ * @property int $permission_id
+ * @property \Carbon\Carbon $create_time
+ * @property \Carbon\Carbon $update_time
  */
 class AdminRolePermission extends BaseModel
 {

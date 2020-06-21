@@ -28,7 +28,7 @@ class HomeController extends AdminController
     public function search()
     {
         $search = $this->request->input('q');
-        return $this->render('index',['_search' => $search]);
+        return $this->render('index', ['_search' => $search]);
     }
 
     /**

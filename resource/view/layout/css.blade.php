@@ -23,7 +23,7 @@
 <!-- summernote -->
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/summernote/summernote-bs4.css">
 <!-- Google Font: Source Sans Pro -->
-<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+<link href="/vendor/hyperf-admin/AdminLTE/dist/css/google-font/fonts.css" rel="stylesheet">
 <!-- Bootstrap Color Picker -->
 <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
 <!-- Select2 -->
@@ -46,7 +46,7 @@
     .select2 {
         width: 100%
     }
-    @media only screen and (min-width: 768px) {
+    @media only screen and (min-width: 576px) {
         .form-horizontal .control-label {
             padding-top: 7px;
             margin-bottom: 0;

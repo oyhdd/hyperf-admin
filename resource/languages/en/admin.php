@@ -23,6 +23,10 @@ return [
     'new'           => 'New',
     'show'          => 'Show',
     'view'          => 'View',
+    'reset'         => 'Reset',
     'select'        => 'Select',
     'list'          => 'List',
+    'deny'          => 'Permission denied',
+    'action'        => 'Action',
+    'filter'        => 'Filter',
 ];

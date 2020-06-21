@@ -12,11 +12,13 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 use Phper666\JwtAuth\Jwt;
 use Phper666\JwtAuth\Exception\TokenValidException;
 use Oyhdd\Admin\Task\AdminOperationLogTask;
 use Oyhdd\Admin\Model\AdminUser;
 use Oyhdd\Admin\Common\Log;
+use Oyhdd\Admin\Exception\AuthException;
 
 class AuthMiddleware implements MiddlewareInterface
 {
@@ -75,16 +77,67 @@ class AuthMiddleware implements MiddlewareInterface
             $task = $container->get(AdminOperationLogTask::class);
             $task->handle($userId, $request->getServerParams(), $request->getParsedBody());
 
+            // 检查权限
+            if (!$this->checkPermission($request, $user)) {
+                throw new AuthException(trans('admin.deny'), 403);
+            }
             return $handler->handle($request);
         } catch (TokenValidException $e) {
             $this->session->forget('Authorization');
         } catch (\Throwable $t) {
             $error = sprintf('%s in %s:%s', $t->getMessage(), $t->getFile(), $t->getLine());
             Log::error("Server Error", [$error]);
+            if ($request->isAjax()) {
+                return $this->response->withStatus($t->getCode())->withBody(new SwooleStream($t->getMessage()));
+            }
+            $params = "code=".$t->getCode()."&error=".$t->getMessage();
+            if ($request->getUri()->getPath() == '/admin/user/error' && rawurldecode($request->getUri()->getQuery()) == $params) {
+                return $this->response->withStatus($t->getCode())->json(['error' => $t->getMessage()]);
+            }
 
-            return $this->response->redirect("/admin/user/error?error=".$error);
+            return $this->response->redirect("/admin/user/error?".$params);
         }
 
         return $this->response->redirect('/admin/user/login');
+    }
+
+    /**
+     * check the permission
+     * @param  ServerRequestInterface  $request
+     * @param  AdminUser               $user
+     * @return bool
+     */
+    private function checkPermission(ServerRequestInterface $request, AdminUser $user): bool
+    {
+        $path = trim($request->getUri()->getPath(), '/');
+
+        // 忽略以下路由权限
+        $excepts = array_merge(config('admin.auth.excepts', []), [
+            'admin/user/error',
+            'admin/search'
+        ]);
+        if ($user::isValidaUrl($excepts, $path)) {
+            return true;
+        }
+
+        // 校验路由权限
+        $permissions = $user->allPermissions()->toArray();
+        foreach ($permissions as $permission) {
+            // 校验路由
+            $httpPaths = explode("\n", str_replace(["\r\n", " ", ","], "\n", $permission['http_path']));
+            if (!$user::isValidaUrl($httpPaths, $path)) {
+                continue;
+            }
+
+            // 校验请求方式
+            $method = collect(explode(",", $permission['http_method']))->filter()->map(function ($method) {
+                return strtoupper($method);
+            });
+            if ($method->isEmpty() || $method->contains(strtoupper($request->getMethod()))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -6,6 +6,7 @@
         width: 25px;
     }
 </style>
+
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <!-- Left navbar links -->
@@ -48,7 +49,7 @@
                 </li>
                 <li class="user-footer">
                     <div class="float-left">
-                        <a href="/admin/user/{{ $data['_user']['id'] }}/edit" class="btn btn-default btn-flat">{{ trans('admin.setting') }}</a>
+                        <a href="/admin/user/setting" class="btn btn-default btn-flat">{{ trans('admin.setting') }}</a>
                     </div>
                     <div class="float-right">
                         <a href="/admin/user/logout" class="btn btn-default btn-flat">{{ trans('admin.logout') }}</a>
@@ -58,13 +59,13 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#">
-            <i class="fas fa-th-large"></i>
+                <i class="fas fa-th-large"></i>
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/admin/user/lock">
-            <i class="fas fa-lock"></i>
-            <span id="lockscreen_label">{{ trans('admin.lockscreen') }}</span>
+                <i class="fas fa-lock"></i>
+                <span id="lockscreen_label">{{ trans('admin.lockscreen') }}</span>
             </a>
         </li>
     </ul>

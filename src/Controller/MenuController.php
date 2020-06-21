@@ -29,9 +29,14 @@ class MenuController extends AdminController
         $params = $this->request->all();
         if (!empty($params['id'])) {
             $menu = AdminMenu::findOrFail($params['id']);
+            if ($menu->id == $params['parent_id']) {
+                $this->admin_toastr("父级菜单不能为自己", 'error', 5);
+                return $this->redirect("/admin/menu/{$params['id']}/edit");
+            }
         } else {
             $menu = new AdminMenu();
         }
+
         if ($menu->fill($params)->save() && !empty($params['roles'])) {
             AdminRoleMenu::batchInsert($menu->id, $params['roles']);
         }
@@ -49,6 +54,7 @@ class MenuController extends AdminController
             $this->admin_toastr("Params Error", 'error', 5);
             return $this->response();
         }
+
         $menuIds = AdminMenu::getAll(['id'], ['parent_id' => $id]);
         $menuIds = array_column($menuIds, 'id');
         $menuIds[] = $id;
@@ -59,6 +65,7 @@ class MenuController extends AdminController
         } else {
             $this->admin_toastr("Delete Menu Fail", 'error', 5);
         }
+
         return $this->response();
     }
 
@@ -68,8 +75,9 @@ class MenuController extends AdminController
     public function edit(int $id)
     {
         $model = AdminMenu::with('roles')->findOrFail($id);
+
         return $this->render('admin.menu.create', [
-            'model' => $model->toArray()
+            'model' => $model
         ]);
     }
 }

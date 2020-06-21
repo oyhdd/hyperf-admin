@@ -3,9 +3,9 @@
 namespace Oyhdd\Admin\Controller;
 
 use Hyperf\HttpServer\Annotation\{Controller, RequestMapping, Middleware};
+use Hyperf\Di\Annotation\Inject;
 use Oyhdd\Admin\Middleware\AuthMiddleware;
 use Oyhdd\Admin\Search\AdminOperationLogSearch;
-use Hyperf\Di\Annotation\Inject;
 
 /**
  * @Controller(prefix="admin/log")
@@ -25,11 +25,15 @@ class LogController extends AdminController
     public function index()
     {
         $params = $this->request->all();
+        $params['page_size'] = 5;
+
         $dataProvider = $this->opLogSearch->search($params);
+        $searchModel  = $this->opLogSearch->searchForm($params);
 
         return $this->render('admin.log.index', [
             'dataProvider' => $dataProvider,
-            'params' => $params,
+            'searchModel'  => $searchModel,
+            'params'       => $params,
         ]);
     }
 
@@ -44,6 +48,7 @@ class LogController extends AdminController
         } else {
             $this->admin_toastr("Delete All Fail", 'error', 5);
         }
+
         return $this->response();
     }
 

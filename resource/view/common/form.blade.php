@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-lg-12">
-        <div class="card card-default">
+        <div class="card card-outline {{ empty($model->id) ? "card-success" : "card-primary" }}">
             <div class="card-header">
                 <h3 class="card-title">{{ $form_title ?? (empty($model->id) ? trans('admin.create') : trans('admin.edit')) }}</h3>
                 <div class="card-tools mr-0">
@@ -8,19 +8,20 @@
                     @yield('card-tools')
                 </div>
             </div>
-            <form role="form" class="form-horizontal" method="post" enctype="multipart/form-data" {{ isset($action) ? "action='{$action}'" : '' }}>
+            <form role="form" class="form-horizontal" method="post" enctype="multipart/form-data" {{ isset($action) ? "action={$action}" : '' }}>
                 <div class="card-body">
                     @foreach($form as $column => $attribute)
-                    @if(isset($attribute['label']) && isset($attribute['input']))
-                    <div class="form-group row">
-                        {!! $attribute['label'] !!}
-                        <div class="input-group col-sm-7">
-                            {!! $attribute['input'] !!}
-                        </div>
-                    </div>
-                    @endif
+                        @if(isset($attribute['label']) && isset($attribute['input']))
+                            <div class="form-group row">
+                                {!! $attribute['label'] !!}
+                                <div class="input-group col-sm-7">
+                                    {!! $attribute['input'] !!}
+                                </div>
+                                {!! $attribute['help'] ?? '' !!}
+                            </div>
+                        @endif
                     @endforeach
-                    
+
                 </div>
                 <div class="card-footer">
                     <div class="col-sm-10">
@@ -33,6 +34,7 @@
         </div>
     </div>
 </div>
+
 <script type="text/javascript">
     $(function () {
         $('.duallistbox').bootstrapDualListbox()
@@ -43,7 +45,7 @@
             let list_url = "{{ str_replace('/'.$model->id.'/edit', '', $_path) }}"
             Swal.fire({
                 type: 'warning', // 弹框类型
-                title: '确认删除该记录(id = {{ $model->id }})', // 标题
+                title: '确认删除该记录?', // 标题
                 // text: "删除后将无法恢复，请确认！", //显示内容
 
                 confirmButtonColor: '#DD6B55',// 确定按钮的 颜色
@@ -61,7 +63,15 @@
                                 window.location.href = list_url;
                             },
                             error: function(data) {
-                                Swal.fire("Error", "请求失败，请稍后重试！", "error");
+                                Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 5000,
+                                }).fire({
+                                    type: "error",
+                                    title: data.responseText,
+                                })
                             }
                         });
                     }

@@ -3,9 +3,9 @@
 namespace Oyhdd\Admin\Controller;
 
 use Hyperf\HttpServer\Annotation\{Controller, RequestMapping, Middleware};
+use Hyperf\Di\Annotation\Inject;
 use Oyhdd\Admin\Middleware\AuthMiddleware;
 use Oyhdd\Admin\Search\AdminRoleSearch;
-use Hyperf\Di\Annotation\Inject;
 
 /**
  * @Controller(prefix="admin/role")
@@ -21,24 +21,27 @@ class RoleController extends AdminController
 
     /**
      * @RequestMapping(path="", methods="get")
-     * 
+     *
      * Lists all models.
      * @return mixed
      */
     public function index()
     {
         $params = $this->request->all();
+
         $dataProvider = $this->adminRoleSearch->search($params);
+        $searchModel = $this->adminRoleSearch->searchForm($params);
 
         return $this->render('admin.role.index', [
             'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
             'params'       => $params,
         ]);
     }
 
     /**
      * @RequestMapping(path="create")
-     * 
+     *
      * Creates a new model.
      * @return mixed
      */
@@ -59,7 +62,7 @@ class RoleController extends AdminController
 
     /**
      * @RequestMapping(path="{id}/edit")
-     * 
+     *
      * Updates an existing model.
      * @param  int $id
      * @return mixed
@@ -81,9 +84,8 @@ class RoleController extends AdminController
 
     /**
      * @RequestMapping(path="{id}", methods="get")
-     * 
+     *
      * Displays a single model.
-     * @author Eric
      * @param  int $id
      * @return mixed
      */
@@ -98,7 +100,7 @@ class RoleController extends AdminController
 
     /**
      * @RequestMapping(path="{id}/delete", methods="post")
-     * 
+     *
      * Deletes an existing model.
      * @param  int $id
      * @return mixed

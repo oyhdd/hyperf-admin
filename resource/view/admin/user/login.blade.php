@@ -21,7 +21,7 @@
     <!-- Toastr -->
     <link rel="stylesheet" href="/vendor/hyperf-admin/AdminLTE/plugins/toastr/toastr.min.css">
     <!-- Google Font: Source Sans Pro -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link href="/vendor/hyperf-admin/AdminLTE/dist/css/google-font/fonts.css" rel="stylesheet">
     <style type="text/css">
         .login-page{height: 80vh;}
     </style>

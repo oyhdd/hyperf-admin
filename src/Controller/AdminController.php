@@ -2,17 +2,18 @@
 
 namespace Oyhdd\Admin\Controller;
 
+use Psr\Container\ContainerInterface;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
-use Psr\Container\ContainerInterface;
 use Hyperf\Contract\SessionInterface;
 use Hyperf\View\RenderInterface;
-use Phper666\JwtAuth\Jwt;
-use Lcobucci\JWT\Token;
+use Hyperf\Utils\Context;
 use Illuminate\Support\MessageBag;
-use Oyhdd\Admin\Model\AdminMenu;
+use Lcobucci\JWT\Token;
 use Phper666\JwtAuth\Exception\TokenValidException;
+use Phper666\JwtAuth\Jwt;
+use Oyhdd\Admin\Model\{AdminMenu, AdminUser};
 
 class AdminController
 {
@@ -66,15 +67,16 @@ class AdminController
             $data['_view'] = $view;
             $view = 'layout.content';
         }
+
         $data['_csrf_token'] = $this->session->regenerateToken();
+
         $data['_toastr'] = [];
         if ($this->session->has('toastr')) {
             $data['_toastr'] = $this->session->remove('toastr');
         }
-
         if (!isset($data['_user'])) {
             $data['_user'] = [];
-            if ($user = $this->request->getAttribute('user')) {
+            if ($user = $this->getUser()) {
                 $data['_user'] = $user->toArray();
             }
         }
@@ -82,7 +84,8 @@ class AdminController
         if (!empty($user)) {
             $uri = $this->request->getPathInfo();
             $data['_menu'] = AdminMenu::getMenuTree($uri, $user);
-            $data['_path'] = '/'.$this->request->path();
+            $data['_path'] = $this->request->getPathInfo();
+            $data['_full_path'] = $this->request->fullUrl();
         }
 
         return $this->render->render($view, compact('data'));
@@ -117,7 +120,6 @@ class AdminController
                 return $this->jwt->getTokenObj($token);
             }
         } catch (TokenValidException $t) {
-            // var_dump("AdminController: ".$t->getMessage());
         }
 
         return null;
@@ -125,13 +127,12 @@ class AdminController
 
     /**
      * 接口返回
-     * @author Eric
      * @param  array       $data
      * @param  int         $code
      * @param  string      $msg
      * @return array
      */
-    public function response(array $data = [], int $code = 0, string $msg = 'success'): array
+    public function response($data = [], int $code = 0, string $msg = 'success'): array
     {
         return compact('code', 'msg', 'data');
     }
@@ -142,5 +143,14 @@ class AdminController
     public function redirect(string $toUrl, int $status = 302, string $schema = 'http')
     {
         return $this->response->redirect($toUrl, $status, $schema);
+    }
+
+    /**
+     * get User Info
+     * @return AdminUser
+     */
+    public function getUser(): ?AdminUser
+    {
+        return $this->request->getAttribute('user', null);
     }
 }

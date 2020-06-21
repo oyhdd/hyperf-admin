@@ -7,7 +7,9 @@ use Hyperf\Server\SwooleEvent;
 use Hyperf\Framework\Bootstrap\TaskCallback;
 use Hyperf\Framework\Bootstrap\FinishCallback;
 use Hyperf\Session\Middleware\SessionMiddleware;
-use Oyhdd\Admin\Middleware\VerifyCsrfTokenMiddleware;
+use Monolog\Handler;
+use Monolog\Formatter;
+use Monolog\Logger;
 
 class ConfigProvider
 {
@@ -25,11 +27,36 @@ class ConfigProvider
             'middlewares' => [
                 'http' => [
                     SessionMiddleware::class,
-                    VerifyCsrfTokenMiddleware::class,
                 ],
             ],
             // 合并到 config/autoload/listeners.php 文件
             'listeners' => [],
+            // 合并到 config/autoload/view.php 文件
+            // 'view' => [
+            //     'config' => [
+            //         'view_path' => BASE_PATH . '/app/Admin/View/',
+            //     ],
+            // ],
+            // 合并到 config/autoload/logger.php 文件
+            'logger' => [
+                'admin' => [
+                    'handler' => [
+                        'class' => Handler\RotatingFileHandler::class,
+                        'constructor' => [
+                            'filename' => BASE_PATH . '/runtime/logs/admin.log',
+                            'level' => Logger::NOTICE,
+                        ],
+                    ],
+                    'formatter' => [
+                        'class' => Formatter\LineFormatter::class,
+                        'constructor' => [
+                            'format' => null,
+                            'dateFormat' => null,
+                            'allowInlineLineBreaks' => true,
+                        ],
+                    ],
+                ]
+            ],
             // 合并到 config/autoload/server.php 文件
             'server' => [
                 'settings' => [

@@ -5,8 +5,8 @@ namespace Oyhdd\Admin\Task;
 use Hyperf\Utils\Coroutine;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Task\Annotation\Task;
-use Oyhdd\Admin\Model\AdminOperationLog;
 use Hyperf\Utils\Str;
+use Oyhdd\Admin\Model\AdminOperationLog;
 
 class AdminOperationLogTask
 {

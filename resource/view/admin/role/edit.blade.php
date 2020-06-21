@@ -1,14 +1,14 @@
 <?php
 
-$title = '角色列表';
-$description = 'show';
-$breadcrumb[] = ['text' => $title, 'url' => str_replace("/{$model->id}/edit", '', $_path)];
-$breadcrumb[] = ['text' => '编辑'];
+    $title = '角色列表';
+    $description = 'show';
+    $breadcrumb[] = ['text' => $title, 'url' => str_replace("/{$model->id}/edit", '', $_path)];
+    $breadcrumb[] = ['text' => '编辑'];
 
-$permissions = \Oyhdd\Admin\Model\AdminPermission::all()->pluck('name', 'id')->toArray();
-$selected = array_column($model->permissions->toArray(), 'id');
+    $permissions = \Oyhdd\Admin\Model\AdminPermission::all()->pluck('name', 'id')->toArray();
+    $selected = array_column($model->permissions->toArray(), 'id');
 
-$form = new \Oyhdd\Admin\Model\Widget\Form($model);
+    $form = new \Oyhdd\Admin\Model\Widget\Form($model);
 ?>
 
 <!-- 引入面包屑 -->
@@ -21,9 +21,9 @@ $form = new \Oyhdd\Admin\Model\Widget\Form($model);
 @endsection
 
 <!-- 表单编辑 -->
-@include('common.edit', [
-    // 'action' => $_path,
+@include('common.form', [
     // 'form' => $form,
+    // 'action' => $_path,
     'attributes' => [
         $form->display('id', 'Id'),
         $form->text('name', '名称')->rules('required'),

@@ -1,36 +1,41 @@
 <?php
 
-$title = '权限';
-$description = 'index';
-$breadcrumb[] = ['text' => $title];
-
+    $title = '权限';
+    $description = 'index';
+    $breadcrumb[] = ['text' => $title];
 ?>
+
 <!-- 引入面包屑 -->
 @include('layout.breadcrumb', compact('title', 'description', 'breadcrumb'))
 
 <!-- 工具框 -->
 @section('card-tools')
-<a class='btn btn-success' href="{{ $_path }}/create"><i class="fa fa-plus"></i> {{ trans('admin.create') }}</a>
+    <a class='btn btn-success' href="{{ $_path }}/create"><i class="fa fa-plus"></i> {{ trans('admin.create') }}</a>
 @endsection
 
 <!-- 列表 -->
 @include('common.table', [
     // 'dataProvider' => $dataProvider,
-    // '_path' => $_path,
+    // 'searchModel'  => $searchModel,
     'action' => [
         'view',
         'edit',
         'delete',
     ],
     'columns' => [
-        'id',
+        [
+            'attribute' => 'id',
+            'sort' => 'id',
+        ],
         [
             'label' => '名称',
-            'attribute' => 'name'
+            'attribute' => 'name',
+            'sort' => 'id',
         ],
         [
             'label' => '标识',
-            'attribute' => 'slug'
+            'attribute' => 'slug',
+            'sort' => 'id',
         ],
         [
             'label' => '请求方法',
@@ -50,28 +55,19 @@ $breadcrumb[] = ['text' => $title];
         [
             'label' => '路由',
             'value' => function ($model) {
-                return str_replace(["\r\n", "\n", "\r", ","], '<br>', $model->http_path);
+                $http_path = str_replace(["\r\n", "\n", "\r", ",", " "], '<br>', $model->http_path);
+                return empty($http_path) ? 'admin' : $http_path;
             }
         ],
         [
-            'attribute' => 'create_time',
             'label' => '创建时间',
+            'attribute' => 'create_time',
+            'sort' => 'id',
         ],
         [
-            'attribute' => 'update_time',
             'label' => '更新时间',
+            'attribute' => 'update_time',
+            'sort' => 'id',
         ]
     ]
 ])
-
-<script type="text/javascript">
-    $(function () {
-        // $.dataTablesSettings.searching = true;
-        $.dataTablesSettings.columnDefs = [{
-            'targets' : [7],
-            'orderable' : false
-        }];
-
-        $(".admin-table").DataTable($.dataTablesSettings);
-    })
-</script>

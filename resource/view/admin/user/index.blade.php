@@ -1,22 +1,22 @@
 <?php
 
-$title = '用户列表';
-$description = 'index';
-$breadcrumb[] = ['text' => $title];
-
+    $title = '用户列表';
+    $description = 'index';
+    $breadcrumb[] = ['text' => $title];
 ?>
+
 <!-- 引入面包屑 -->
 @include('layout.breadcrumb', compact('title', 'description', 'breadcrumb'))
 
 <!-- 工具框 -->
 @section('card-tools')
-<a class='btn btn-success' href="{{ $_path }}/create"><i class="fa fa-plus"></i> {{ trans('admin.create') }}</a>
+    <a class='btn btn-success ml-2' href="{{ $_path }}/create"><i class="fa fa-plus"></i> {{ trans('admin.create') }}</a>
 @endsection
 
 <!-- 列表 -->
 @include('common.table', [
     // 'dataProvider' => $dataProvider,
-    // '_path' => $_path,
+    // 'searchModel'  => $searchModel,
     'action' => [
         'view',
         'edit',
@@ -28,14 +28,19 @@ $breadcrumb[] = ['text' => $title];
         }
     ],
     'columns' => [
-        'id',
+        [
+            'attribute' => 'id',
+            'sort' => 'id',
+        ],
         [
             'label' => '用户名',
-            'attribute' => 'username'
+            'attribute' => 'username',
+            'sort' => 'username',
         ],
         [
             'label' => '名称',
-            'attribute' => 'name'
+            'attribute' => 'name',
+            'sort' => 'name',
         ],
         [
             'label' => '角色',
@@ -58,24 +63,14 @@ $breadcrumb[] = ['text' => $title];
             }
         ],
         [
-            'attribute' => 'create_time',
             'label' => '创建时间',
+            'attribute' => 'create_time',
+            'sort' => 'create_time',
         ],
         [
-            'attribute' => 'update_time',
             'label' => '更新时间',
+            'attribute' => 'update_time',
+            'sort' => 'update_time',
         ]
     ]
 ])
-
-<script type="text/javascript">
-    $(function () {
-        // $.dataTablesSettings.searching = true;
-        $.dataTablesSettings.columnDefs = [{
-            'targets' : [6],
-            'orderable' : false
-        }];
-
-        $(".admin-table").DataTable($.dataTablesSettings);
-    })
-</script>

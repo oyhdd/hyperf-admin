@@ -9,9 +9,9 @@ use Hyperf\Utils\ApplicationContext;
 
 class Log
 {
-    public static function get(string $name = 'app')
+    public static function get()
     {
-        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get($name);
+        return ApplicationContext::getContainer()->get(\Hyperf\Logger\LoggerFactory::class)->get('admin', config('admin.logger', 'admin'));
     }
 
     public static function __callStatic(string $method, $arguments)

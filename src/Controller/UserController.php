@@ -37,9 +37,8 @@ class UserController extends AdminController
 
     /**
      * @RequestMapping(path="login")
-     * 
+     *
      * 登录
-     * @author Eric
      * @param  string   $username   用户名
      * @param  string   $password   密码
      * @param  int      $remember   记住我: 1是 0否
@@ -61,7 +60,7 @@ class UserController extends AdminController
         } elseif ($tokenObj = $this->getTokenObj()) {
             $userId = $tokenObj->getClaim('id');
             $user = AdminUserSearch::where('id', $userId)->where('status', AdminUserSearch::STATUS_ENABLE)->first();
-            if (empty($user)) {
+            if (!empty($user)) {
                 $request = $this->request->withAttribute('user', $user);
                 Context::set(ServerRequestInterface::class, $request);
                 return $this->response->redirect('/admin');
@@ -75,27 +74,26 @@ class UserController extends AdminController
 
     /**
      * @RequestMapping(path="logout")
-     * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * 退出
-     * @author Eric
      * @return view
      */
     public function logout()
     {
         $token = $this->request->cookie('Authorization', '');
+
         try {
             $this->jwt->logout($token);
         } catch (\Throwable $t) {
         }
+
         return $this->response->redirect('/admin/user/login');
     }
 
     /**
      * @RequestMapping(path="lock")
-     * 
+     *
      * 锁屏
-     * @author Eric
      * @param  string   $password   密码
      * @return view
      */
@@ -105,20 +103,23 @@ class UserController extends AdminController
         if (empty($tokenObj) || empty($userId = $tokenObj->getClaim('id', ''))) {
             return $this->response->redirect('/admin/user/login');
         }
+
         $user = AdminUserSearch::where('id', $userId)->where('status', AdminUserSearch::STATUS_ENABLE)->first();
         if (empty($user)) {
             return $this->response->redirect('/admin/user/login');
         }
+
         $token = 'Bearer '.(string) $this->jwt->getToken(['id' => $userId, 'lock' => true]);
         $cookie = new Cookie('Authorization', $token);
+
         return $this->render('admin.user.lock', ['_user' => $user->toArray()], true)->withCookie($cookie);
     }
 
     /**
      * @RequestMapping(path="unlock")
-     * 
+     *
      * 解锁
-     * @author Eric
+     * @param  string   $password   密码
      * @return view
      */
     public function unlock()
@@ -128,10 +129,12 @@ class UserController extends AdminController
         if (empty($tokenObj) || empty($userId = $tokenObj->getClaim('id', ''))) {
             return $this->response->redirect('/admin/user/login');
         }
+
         $user = AdminUserSearch::find($userId);
         if (empty($user)) {
             return $this->response->redirect('/admin/user/login');
         }
+
         if ($this->hash->check($password, $user->password)) {
             $token = 'Bearer '.(string) $this->jwt->getToken(['id' => $user->id]);
             $cookie = new Cookie('Authorization', $token);
@@ -143,11 +146,10 @@ class UserController extends AdminController
     }
 
     /**
-     * @RequestMapping(path="saveCustomizeStyle")
+     * @RequestMapping(path="setting/saveCustomizeStyle")
      * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * 自定义网站样式
-     * @author Eric
      * @param  string   $selector   页面元素
      * @param  array    $styles     样式[class_name => enable]
      * @return array
@@ -159,25 +161,23 @@ class UserController extends AdminController
         if (empty($selector) || empty($styles)) {
             return [];
         }
-        $user = $this->request->getAttribute('user');
+        $user = $this->getUser();
         $customize_style = !empty($user->customize_style) ? json_decode($user->customize_style, true) : [];
         foreach ($styles as $class_name => $enable) {
             $customize_style[$selector][$class_name] = intval($enable);
         }
 
         $user->customize_style = json_encode($customize_style);
-        if ($user->save()) {
-            return [];
-        }
+        $user->save();
 
+        return [];
     }
 
     /**
-     * @RequestMapping(path="clearCustomizeStyle")
+     * @RequestMapping(path="setting/clearCustomizeStyle")
      * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * 清除自定义网站样式
-     * @author Eric
      * @param  string   $selector   页面元素
      * @return array
      */
@@ -188,7 +188,7 @@ class UserController extends AdminController
             return [];
         }
 
-        $user = $this->request->getAttribute('user');
+        $user = $this->getUser();
         $customize_style = !empty($user->customize_style) ? json_decode($user->customize_style, true) : [];
         if ($selector === 'all') {
             $customize_style = [];
@@ -201,38 +201,47 @@ class UserController extends AdminController
             $this->admin_toastr("重置样式成功", 'success');
             return [];
         }
+
         return [];
     }
 
     /**
      * @RequestMapping(path="error")
-     * 
+     * @Middleware(AuthMiddleware::class)
+     *
      * 错误跳转页
-     * @author Eric
      * @param  string   $error
      * @return array
      */
     public function error()
     {
         $error = htmlspecialchars($this->request->input('error', ''));
-        return $this->render('common.error', ['error' => $error], true);
+        $code = intval($this->request->input('code', 500));
+        if ($code == 0) {
+            $code = 500;
+        }
+
+        return $this->render('common.error', compact('code', 'error'));
     }
 
     /**
-     * 
+     *
      * @RequestMapping(path="", methods="get")
      * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * Lists all models.
      * @return mixed
      */
     public function index()
     {
         $params = $this->request->all();
+
         $dataProvider = $this->adminUserSearch->search($params);
+        $searchModel = $this->adminUserSearch->searchForm($params);
 
         return $this->render('admin.user.index', [
             'dataProvider' => $dataProvider,
+            'searchModel'  => $searchModel,
             'params'       => $params,
         ]);
     }
@@ -240,13 +249,14 @@ class UserController extends AdminController
     /**
      * @RequestMapping(path="create")
      * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * Creates a new model.
      * @return mixed
      */
     public function create()
     {
         $model = new AdminUserSearch();
+
         if ($this->request->isMethod('post')) {
             $params = $this->request->all();
             $validator = $this->validationFactory->make(
@@ -276,7 +286,7 @@ class UserController extends AdminController
     /**
      * @RequestMapping(path="{id}/edit")
      * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * Updates an existing model.
      * @param  int $id
      * @return mixed
@@ -316,11 +326,49 @@ class UserController extends AdminController
     }
 
     /**
+     * @RequestMapping(path="setting")
+     * @Middleware(AuthMiddleware::class)
+     *
+     * Updates an existing model.
+     * @param  int $id
+     * @return mixed
+     */
+    public function setting()
+    {
+        $model = $this->getUser();
+
+        if ($this->request->isMethod('post')) {
+            $params = $this->request->all();
+            $validator = $this->validationFactory->make(
+                $params,
+                [
+                    'password' => 'required|min:6|confirmed',
+                    'username' => 'required',
+                    'name' => 'required',
+                ]
+            );
+            if ($validator->fails()){
+                $this->admin_toastr($validator->errors()->first(), 'error', 5);
+            } else {
+                if ($params['password'] != $model->password) {
+                    $params['password'] = $this->hash->make($params['password']);
+                }
+                if ($model->fill($params) && $model->save()) {
+                    $this->admin_toastr("Edit Success", 'success', 2);
+                }
+            }
+        }
+
+        return $this->render('admin.user.edit', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * @RequestMapping(path="{id}", methods="get")
      * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * Displays a single model.
-     * @author Eric
      * @param  int $id
      * @return mixed
      */
@@ -336,7 +384,7 @@ class UserController extends AdminController
     /**
      * @RequestMapping(path="{id}/delete", methods="post")
      * @Middleware(AuthMiddleware::class)
-     * 
+     *
      * Deletes an existing model.
      * @param  int $id
      * @return mixed
