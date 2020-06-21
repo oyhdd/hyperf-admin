@@ -117,6 +117,9 @@ class BaseModel extends Model
             if (count($keys = explode('.', $key)) > 1) {
                 // 模型关系查询
                 list($relation, $relation_field) = $keys;
+                if (!method_exists($this, $relation)) {
+                    continue;
+                }
                 $query = $query->whereHas($relation, function ($query) use ($relation_field, $value) {
                     if (is_array($value)) {
                         $query->whereIn($relation_field, $value);

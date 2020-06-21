@@ -37,8 +37,8 @@ class MenuController extends AdminController
             $menu = new AdminMenu();
         }
 
-        if ($menu->fill($params)->save() && !empty($params['roles'])) {
-            AdminRoleMenu::batchInsert($menu->id, $params['roles']);
+        if ($menu->fill($params) && $menu->save()) {
+            $menu->roles()->sync($this->request->input('roles'));
         }
 
         return $this->redirect("/admin/menu");

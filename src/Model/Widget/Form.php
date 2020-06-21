@@ -207,7 +207,6 @@ INPUT;
             <select class="form-control select2" multiple="multiple" data-placeholder="{$placeholder}" id="{$column}" name="{$column}[]" #required#  style="width:100% !important">
                 #options#
             </select>
-            <input type="hidden" name="{$column}[]">
 INPUT;
 
         $label = $this->getLabel($column, $label);

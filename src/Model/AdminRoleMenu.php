@@ -30,30 +30,4 @@ class AdminRoleMenu extends BaseModel
      * @var array
      */
     protected $casts = ['role_id' => 'integer', 'menu_id' => 'integer', 'create_time' => 'datetime', 'update_time' => 'datetime'];
-
-    /**
-     * batch insert
-     * @param  int    $menu_id
-     * @param  array  $roleIds
-     * @return bool
-     */
-    public static function batchInsert(int $menu_id, array $roleIds): bool
-    {
-        $data = [];
-        foreach ($roleIds as $role_id) {
-            if (empty($role_id)) {
-                continue;
-            }
-            $data[] = [
-                'menu_id' => $menu_id,
-                'role_id' => $role_id,
-            ];
-        }
-        if (empty($data)) {
-            return false;
-        }
-
-        self::query()->where('menu_id', $menu_id)->delete();
-        return Db::table('admin_role_menu')->insert($data);
-    }
 }
