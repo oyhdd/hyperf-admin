@@ -76,7 +76,7 @@ class AdminMenu extends BaseModel
                 $item->has_permission = true; // 默认有权限
                 $menuPermissions = $item->allPermissions();
                 // 菜单未设置权限
-                if (empty($menuPermissions)) {
+                if (empty($menuPermissions) || in_array('*', $slugPatterns)) {
                     continue;
                 }
                 // 用户无菜单权限

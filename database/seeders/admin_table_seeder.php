@@ -54,7 +54,7 @@ class AdminTableSeeder extends Seeder
         AdminPermission::insert([
             [
                 'name'        => '所有',
-                'slug'        => 'all',
+                'slug'        => '*',
                 'http_method' => '',
                 'http_path'   => '*',
             ],
@@ -62,7 +62,7 @@ class AdminTableSeeder extends Seeder
                 'name'        => '系统管理',
                 'slug'        => 'system.setting',
                 'http_method' => '',
-                'http_path'   => "admin/user\r\nadmin/role\r\nadmin/permission\r\nadmin/menu\r\nadmin/log",
+                'http_path'   => "admin/user*\r\nadmin/role*\r\nadmin/permission*\r\nadmin/menu*\r\nadmin/log*",
             ],
             [
                 'name'        => '个人设置',

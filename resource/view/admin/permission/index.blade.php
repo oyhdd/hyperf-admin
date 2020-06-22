@@ -30,12 +30,12 @@
         [
             'label' => '名称',
             'attribute' => 'name',
-            'sort' => 'id',
+            'sort' => 'name',
         ],
         [
             'label' => '标识',
             'attribute' => 'slug',
-            'sort' => 'id',
+            'sort' => 'slug',
         ],
         [
             'label' => '请求方法',
@@ -62,12 +62,12 @@
         [
             'label' => '创建时间',
             'attribute' => 'create_time',
-            'sort' => 'id',
+            'sort' => 'create_time',
         ],
         [
             'label' => '更新时间',
             'attribute' => 'update_time',
-            'sort' => 'id',
+            'sort' => 'update_time',
         ]
     ]
 ])
