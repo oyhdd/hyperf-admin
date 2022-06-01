@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * This file is part of Hyperf Admin
+ */
+use Hyperf\HttpServer\Router\Router;
+
+Router::addGroup(admin_url(), function (){
+    // Home
+    Router::get('', [\App\Admin\Controller\HomeController::class, 'index']);
+
+    // Auth management
+    Router::addGroup('/auth', function (){
+        Router::addRoute(['GET', 'POST'], '/login', [\Oyhdd\Admin\Controller\AuthController::class, 'login']);
+        Router::get('/logout', [\Oyhdd\Admin\Controller\AuthController::class, 'logout']);
+        Router::get('/lock', [\Oyhdd\Admin\Controller\AuthController::class, 'lock']);
+        Router::post('/unlock', [\Oyhdd\Admin\Controller\AuthController::class, 'unlock']);
+        Router::addRoute(['GET', 'POST'], '/site/edit', [\Oyhdd\Admin\Controller\SiteController::class, 'edit']);
+
+        // User
+        Router::addGroup('/user', function (){
+            Router::get('', [\Oyhdd\Admin\Controller\UserController::class, 'index']);
+            Router::post('/export', [\Oyhdd\Admin\Controller\UserController::class, 'export']);
+            Router::post('/delete', [\Oyhdd\Admin\Controller\UserController::class, 'delete']);
+            Router::addRoute(['GET', 'POST'], '/create', [\Oyhdd\Admin\Controller\UserController::class, 'create']);
+            Router::get('/{id}', [\Oyhdd\Admin\Controller\UserController::class, 'show']);
+            Router::addRoute(['GET', 'POST'], '/{id}/edit', [\Oyhdd\Admin\Controller\UserController::class, 'edit']);
+        });
+    });
+
+
+}, [
+    'middleware' => [
+        \Hyperf\Session\Middleware\SessionMiddleware::class,
+        \Oyhdd\Admin\Middleware\CsrfTokenMiddleware::class,
+        \Oyhdd\Admin\Middleware\AuthMiddleware::class,
+        \Oyhdd\Admin\Middleware\LockMiddleware::class,
+    ]
+]);

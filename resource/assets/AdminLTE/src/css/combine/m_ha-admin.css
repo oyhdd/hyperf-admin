@@ -1,0 +1,122 @@
+.btn-default.btn-outline {
+    border: 1px solid #dddddd;
+    background: transparent;
+    color: #444444;
+}
+
+.btn-default.btn-outline:hover,
+.btn-default.btn-outline:active,
+.btn-default.btn-outline.hover {
+    background-color: #4444440d;
+    color: #444444;
+    border-color: #dddddd;
+}
+
+.btn-primary.btn-outline {
+    border: 1px solid #367fa9;
+    background: transparent;
+    color: #3c8dbc;
+}
+
+.btn-primary.btn-outline:hover,
+.btn-primary.btn-outline:active,
+.btn-primary.btn-outline.hover {
+    background-color: #3c8dbc0d;
+    color: #3c8dbc;
+    border-color: #367fa9;
+}
+
+.btn-success.btn-outline {
+    border: 1px solid #008d4c;
+    background: transparent;
+    color: #00a65a;
+}
+
+.btn-success.btn-outline:hover,
+.btn-success.btn-outline:active,
+.btn-success.btn-outline.hover {
+    background-color: #00a65a0d;
+    color: #00a65a;
+    border-color: #008d4c;
+}
+
+.btn-info.btn-outline {
+    border: 1px solid #00acd6;
+    background: transparent;
+    color: #00c0ef;
+}
+
+.btn-info.btn-outline:hover,
+.btn-info.btn-outline:active,
+.btn-info.btn-outline.hover {
+    background-color: #00c0ef0d;
+    color: #00c0ef;
+    border-color: #00acd6;
+}
+
+.btn-danger.btn-outline {
+    border: 1px solid #d73925;
+    background: transparent;
+    color: #dd4b39;
+}
+
+.btn-danger.btn-outline:hover,
+.btn-danger.btn-outline:active,
+.btn-danger.btn-outline.hover {
+    background-color: #dd4b390d;
+    color: #dd4b39;
+    border-color: #d73925;
+}
+
+.btn-warning.btn-outline {
+    border: 1px solid #e08e0b;
+    background: transparent;
+    color: #f39c12;
+}
+
+.btn-warning.btn-outline:hover,
+.btn-warning.btn-outline:active,
+.btn-warning.btn-outline.hover {
+    background-color: #f39c120d;
+    color: #f39c12;
+    border-color: #e08e0b;
+}
+
+@media (max-width:767px) {
+    .navbar-custom-menu>.navbar-nav>.user-menu>a.dropdown-toggle {
+        padding: 16px 15px 7px;
+    }
+}
+
+.navbar-custom-menu>.navbar-nav>.user-menu>.dropdown-menu {
+    width: 100px;
+    margin-top: 2px;
+    padding: 7px;
+}
+
+.navbar-custom-menu>.navbar-nav>.user-menu>.dropdown-menu>.dropdown-user-item {
+    text-align: left;
+}
+
+.grid_actions > *{
+    padding: 0 0 0 16px;
+    position: relative;
+}
+.grid_actions > *:after{
+    position: absolute;
+    bottom: 2px;
+    right: -10px;
+    height: 14px;
+    width: 1px;
+    content: '';
+    background-color: #e3e3e3;
+}
+.grid_actions > *:first-child{
+    padding-left: 0px!important;
+}
+.grid_actions > *:last-child{
+    padding-right: 0px!important;
+}
+.grid_actions > *:last-child:after{
+    width: 0;
+}
