@@ -12,9 +12,8 @@ Hyperf Admin
 1.  composer require oyhdd/hyperf-admin
 2.  php bin/hyperf.php vendor:publish oyhdd/hyperf-admin
 3.  php bin/hyperf.php admin:install
-4.  修改 config/autoload/view.php 中的config.view_path 为: BASE_PATH . '/app/Admin/View/'
-5.  启动 php bin/hyperf.php server:watch
-6.  访问127.0.0.1:9501/admin
+4.  启动 php bin/hyperf.php start
+5.  访问127.0.0.1:9501/admin
 
 #### 使用说明
 
