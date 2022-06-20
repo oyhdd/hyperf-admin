@@ -12,7 +12,6 @@
     </div>
 </section>
 
-
 <script>
     $(function () {
         $(".content-wrapper>.content-header").html($(".pjax-container-content>.content-header").html())
@@ -20,4 +19,6 @@
     })
 </script>
 
-@include('widget.toastr')
+@if ($_data['is_pjax'])
+    @include('widget.toastr')
+@endif

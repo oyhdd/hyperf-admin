@@ -18,7 +18,9 @@
     .sweet-alert.showSweetAlert p {
         word-wrap: break-word;
         word-break: break-all;
-        overflow: hidden;
+        overflow-x: hidden;
+        max-height: 200px;
+        overflow-y: scroll;
     }
 </style>
 <table @if(!empty($id)) id="table_{{ $id }}" @endif class="table table-hover" style="min-width: 1000px;table-layout: auto;">
@@ -31,7 +33,7 @@
             @endif
             @foreach($header as $key => $item)
                 <th @if (!empty($item['width'])) style="width: {{ $item['width'] }}px;" @endif>
-                    {{ $item['label'] }}
+                    {{ $item['title'] }}
                     @isset($item['sort'])
                         @if (empty($_sort))
                             @if (!empty($item['sort']))
@@ -66,24 +68,42 @@
             @endif
             @foreach($header as $key => $value)
                 <td>
-                    {{ $item[$key] }}
+                    <?php
+                        if (isset($value['callback'])) {
+                            $item[$key] = $value['callback']->call($item);
+                        }
+                        if (isset($value['label'])) {
+                            $item[$key] = collect($item[$key])->map(function ($val) use($value) {
+                                return "<span class='label label-{$value['label']}'>{$val}</span>";
+                            })->implode(' ');
+                        }
+                        if (isset($value['link'])) {
+                            $href = $value['link']->call($item);
+                            $item[$key] = "<a href='{$href}'>{$item[$key]}</a>";
+                        }
+                    ?>
+                    {!! $item[$key] !!}
                 </td>
             @endforeach
             @if (!empty($grid) && $grid->showActions())
-                <td class="grid_actions">
-                    @php
-                        $grid->getActionsCallback()->call($item, $grid->getActions())
-                    @endphp
+                <td class="grid-actions">
+
+                    @php $grid->getActionsCallback()->call($item, $grid->getActions()); @endphp
+
                     {!! $grid->getActions()->renderPrepend() !!}
+
                     @if ($grid->getActions()->showView())
                         <a href="{{ $path }}/{{ $item[$grid->getKeyName()] }}" title="{{ trans('admin.show') }}"><i class="fa fa-eye"></i></a>
                     @endif
+
                     @if ($grid->getActions()->showEdit())
                         <a href="{{ $path }}/{{ $item[$grid->getKeyName()] }}/edit" title="{{ trans('admin.edit') }}"><i class="fa fa-edit"></i></a>
                     @endif
+
                     @if ($grid->getActions()->showDelete())
                         <a href="javascript:void(0);" class="grid-row-delete" data-id="{{ $item[$grid->getKeyName()] }}" title="{{ trans('admin.delete') }}"><i class="fa fa-trash"></i></a>
                     @endif
+
                     {!! $grid->getActions()->renderAppend() !!}
                 </td>
             @endif

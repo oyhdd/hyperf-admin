@@ -1,6 +1,6 @@
 <?php
     // Breadcrumb
-    $title = trans('admin_user.title');
+    $title = trans(config('admin.database.user_table') . '.title');
     $description = trans('admin.edit');
     $breadcrumb = [$title];
 

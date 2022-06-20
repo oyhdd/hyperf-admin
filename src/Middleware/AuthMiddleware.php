@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
-use Illuminate\Support\Str;
+use Hyperf\Utils\Str;
 
 class AuthMiddleware implements MiddlewareInterface
 {

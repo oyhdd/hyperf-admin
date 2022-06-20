@@ -1,6 +1,6 @@
 <?php
     // Breadcrumb
-    $title = trans('admin_user.title');
+    $title = trans(config('admin.database.user_table') . '.title');
     $description = trans('admin.list');
     $breadcrumb = [$title];
 
@@ -10,6 +10,9 @@
     $grid->column('id')->sortable();
     $grid->column('username');
     $grid->column('name');
+    $grid->column('roles')->display(function() {
+        return $this->roles->pluck('name');
+    })->label();
     $grid->column('created_at');
     $grid->column('updated_at');
 

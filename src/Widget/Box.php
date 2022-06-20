@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Oyhdd\Admin\Widget;
 
-use Illuminate\Support\Str;
+use Hyperf\Utils\Str;
 
 class Box
 {

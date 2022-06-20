@@ -6,7 +6,7 @@ toastr.options = {
     closeButton: true,
     progressBar: true,
     showMethod: 'slideDown',
-    timeOut: 2000
+    timeOut: 4000
 };
 
 // ============================

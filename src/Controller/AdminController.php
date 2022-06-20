@@ -57,12 +57,11 @@ class AdminController
             'menu' => make(config('admin.database.menu_model'))->getMenuTree(admin_url_without_prefix($path)),
             'path' => $path,
             'site' => make(config('admin.database.site_model'))->getAll(),
-            'is_ajax' => $this->request->header('X-PJAX') === 'true',
+            'is_pjax' => $this->request->header('X-PJAX') === 'true',
             'ha_no_animation' => $this->request->input('_ha_no_animation', 0),
             'query' => $this->request->query(),
         ];
-
-        if ($_data['is_ajax']) {
+        if ($_data['is_pjax']) {
             return view('layout.content', compact('data', '_data'));
         }
 
@@ -91,5 +90,12 @@ class AdminController
     protected function responseJson(array $data = [], int $code = 0, string $msg = 'success'): array
     {
         return compact('code', 'msg', 'data');
+    }
+
+    protected function redirect(string $url): array
+    {
+        $redirect = admin_url($url);
+
+        return $this->responseJson(compact('redirect'));
     }
 }

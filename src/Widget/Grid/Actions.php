@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Oyhdd\Admin\Widget\Grid;
 
-use Illuminate\Support\Collection;
+use Hyperf\Utils\Collection;
 
 class Actions
 {

@@ -45,6 +45,6 @@ trait ExportTrait
         }
 
         $excelService = new ExcelService();
-        return $excelService->setHeader($title)->addData($data)->saveToBrowser(trans($this->getTable() . '.title') . '-' . date("YmdHis"));
+        return $excelService->setHeader($title)->addData($data)->saveToBrowserByTmp(trans($this->getTable() . '.title') . '-' . date("YmdHis"));
     }
 }

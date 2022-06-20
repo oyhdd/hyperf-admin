@@ -40,15 +40,16 @@ class UserController extends AdminController
         if ($this->request->isMethod('post')) {
             $params = $this->request->all();
             if ($params['password'] !== $params['password_confirmation']) {
-                admin_toastr(trans('admin.password_confirm_failed'), 'error');
-            } else {
-                $params['password'] = $this->hash->make($params['password']);
-                if ($model->fill($params) && $model->save()) {
-                    $model->roles()->sync($params['roles'] ?? []);
-                    admin_toastr(trans('admin.create_succeeded'));
-                    return $this->response->redirect(admin_url('auth/user'));
-                }
+                return admin_toastr(trans('admin.password_confirm_failed'), 'error');
             }
+            $params['password'] = $this->hash->make($params['password']);
+            if ($model->fill($params) && $model->save()) {
+                $model->roles()->sync($params['roles'] ?? []);
+                admin_toastr(trans('admin.create_succeeded'));
+
+                return $this->redirect('auth/user');
+            }
+            admin_toastr(trans('admin.create_failed'), 'error');
         }
 
         return $this->render('admin.user.create', [
@@ -57,25 +58,31 @@ class UserController extends AdminController
     }
 
     /**
-    * Updates an existing model.
-    * @param int $id
+    * Update an existing model.
+    *
+    * @param $id
     */
    public function edit($id)
    {
         $model = $this->getModel()->query()->findOrFail($id);
-var_dump($model->toArray());
+
         if ($this->request->isMethod('post')) {
             $params = $this->request->all();
-            if ($params['password'] !== $params['password_confirmation']) {
-                admin_toastr(trans('admin.password_confirm_failed'), 'error');
-            } else {
-                $params['password'] = $this->hash->make($params['password']);
-                if ($model->fill($params) && $model->save()) {
-                    $model->roles()->sync($params['roles'] ?? []);
-                    admin_toastr(trans('admin.create_succeeded'));
-                    return $this->response->redirect(admin_url('auth/user'));
+            if (!empty($params['password'])) {
+                if ($params['password'] !== $params['password_confirmation']) {
+                    return admin_toastr(trans('admin.password_confirm_failed'), 'error');
                 }
+                $params['password'] = $this->hash->make($params['password']);
+            } else {
+                unset($params['password']);
             }
+            if ($model->fill($params) && $model->save()) {
+                $model->roles()->sync($params['roles'] ?? []);
+                admin_toastr(trans('admin.update_succeeded'));
+
+                return $this->redirect('auth/user');
+            }
+            admin_toastr(trans('admin.update_failed'), 'error');
         }
 
         return $this->render('admin.user.edit', [
@@ -84,9 +91,23 @@ var_dump($model->toArray());
    }
 
     /**
+     * Display a single model.
+     *
+     * @param $id
+     */
+    public function show($id)
+    {
+        $model = $this->getModel()->query()->findOrFail($id);
+
+        return $this->render('admin.user.show', [
+            'model' => $model
+        ]);
+    }
+
+    /**
      * Delete an existing model.
-     * 
-     * @param  int $id
+     *
+     * @param $id
      */
     public function delete()
     {
@@ -102,12 +123,12 @@ var_dump($model->toArray());
 
     /**
      * Export data to excel from model.
-     * 
-     * @param int       $is_all
-     * @param int       $is_page
-     * @param string    $id
-     * @param int       $_perPage
-     * @param int       $_page
+     *
+     * @param $is_all
+     * @param $is_page
+     * @param $id
+     * @param $_perPage
+     * @param $_page
      */
     public function export()
     {

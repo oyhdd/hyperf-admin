@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /**
  * This file is part of Hyperf Admin
  */
@@ -26,6 +27,16 @@ Router::addGroup(admin_url(), function (){
             Router::addRoute(['GET', 'POST'], '/create', [\Oyhdd\Admin\Controller\UserController::class, 'create']);
             Router::get('/{id}', [\Oyhdd\Admin\Controller\UserController::class, 'show']);
             Router::addRoute(['GET', 'POST'], '/{id}/edit', [\Oyhdd\Admin\Controller\UserController::class, 'edit']);
+        });
+
+        // Role
+        Router::addGroup('/role', function (){
+            Router::get('', [\Oyhdd\Admin\Controller\RoleController::class, 'index']);
+            Router::post('/export', [\Oyhdd\Admin\Controller\RoleController::class, 'export']);
+            Router::post('/delete', [\Oyhdd\Admin\Controller\RoleController::class, 'delete']);
+            Router::addRoute(['GET', 'POST'], '/create', [\Oyhdd\Admin\Controller\RoleController::class, 'create']);
+            Router::get('/{id}', [\Oyhdd\Admin\Controller\RoleController::class, 'show']);
+            Router::addRoute(['GET', 'POST'], '/{id}/edit', [\Oyhdd\Admin\Controller\RoleController::class, 'edit']);
         });
     });
 

@@ -56,4 +56,6 @@ return [
     'error'                   => '错误',
     'no_query_results'        => '未查询到数据',
     'password_confirm_failed' => '确认密码不匹配',
+    'select_all'              => '全选',
+    'expand'                  => '展开',
 ];

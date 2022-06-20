@@ -12,6 +12,7 @@ function rebuildDist(){
 
     cp ./src/js/*.js ./dist/js
     cp ./src/css/*.png ./dist/css
+    cp ./src/css/*.gif ./dist/css
 }
 
 function buildJs() {

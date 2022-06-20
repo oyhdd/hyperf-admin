@@ -8,7 +8,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
-use Illuminate\Support\Str;
+use Hyperf\Utils\Str;
 
 class LockMiddleware implements MiddlewareInterface
 {

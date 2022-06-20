@@ -46,7 +46,7 @@ class AdminTableSeeder extends Seeder
                 'name'        => 'Administrator',
                 'slug'        => 'administrator',
                 'http_method' => '',
-                'http_path'   => '/*',
+                'http_path'   => '*',
                 'parent_id'   => 0,
                 'order'       => 1,
                 'created_at'  => $now,

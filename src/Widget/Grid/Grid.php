@@ -133,7 +133,7 @@ class Grid extends Box
     {
         $callback->call($this, $this->filter);
 
-        $this->dataProvider->setFilterColumns(array_keys($this->filter->getFields()));
+        $this->dataProvider->setFilterColumns($this->filter->getFields()->keys()->toArray());
 
         return $this;
     }
@@ -291,9 +291,9 @@ FOOTER;
     public function column(string $column, string $label = '')
     {
         $this->column = $column;
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
+        $title = $label ?: trans($this->model->getTable() . '.fields.' . $column);
 
-        $this->columns[$column] = compact('label');
+        $this->columns[$column] = compact('title');
 
         return $this;
     }
@@ -309,6 +309,40 @@ FOOTER;
     {
         if (isset($this->columns[$this->column])) {
             $this->columns[$this->column]['width'] = $width;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a display callback.
+     *
+     * @param \Closure $callback
+     *
+     * @return $this
+     */
+    public function display(Closure $callback)
+    {
+        if (isset($this->columns[$this->column])) {
+            $this->columns[$this->column]['callback'] = $callback;
+        }
+
+        return $this;
+    }
+
+    public function label(string $style = 'primary')
+    {
+        if (isset($this->columns[$this->column])) {
+            $this->columns[$this->column]['label'] = $style;
+        }
+
+        return $this;
+    }
+
+    public function link(Closure $callback)
+    {
+        if (isset($this->columns[$this->column])) {
+            $this->columns[$this->column]['link'] = $callback;
         }
 
         return $this;

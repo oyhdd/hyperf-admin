@@ -71,6 +71,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Debug Mode
+    |--------------------------------------------------------------------------
+    |
+    | When your application is in debug mode, detailed error messages with
+    | stack traces will be shown on every error that occurs within your
+    | application. If disabled, a simple generic error page is shown.
+    |
+    */
+    'debug' => (bool) env('APP_DEBUG', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Lock screen page setting
     |--------------------------------------------------------------------------
     */
@@ -205,5 +217,9 @@ return [
         'role_user_table'       => 'admin_role_user',
         'role_permission_table' => 'admin_role_permission',
         'role_menu_table'        => 'admin_role_menu',
+    ],
+
+    'availableFields' => [
+        // 'html' => \Oyhdd\Admin\Widget\Form\Field\Html::class,
     ],
 ];

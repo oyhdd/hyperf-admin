@@ -3,12 +3,28 @@
 declare (strict_types=1);
 namespace Oyhdd\Admin\Widget\Form;
 
-use App\Model\Model;
 use Closure;
-use Illuminate\Support\Str;
+use App\Model\Model;
+use Hyperf\Utils\Arr;
+use Hyperf\Utils\Collection;
+use Hyperf\Utils\Str;
 use Oyhdd\Admin\Widget\Box;
+use Oyhdd\Admin\Widget\Form\Field;
 use Oyhdd\Admin\Widget\Tools;
 
+/**
+ * Class Form.
+ *
+ * @method Field\Text           text($column, $label = '')
+ * @method Field\Textarea       textarea($column, $label = '')
+ * @method Field\Hidden         hidden($column, $label = '')
+ * @method Field\Html           html($html, $label = '')
+ * @method Field\Number         number($column, $label = '')
+ * @method Field\SwitchField    switch($column, $label = '')
+ * @method Field\Display        display($column, $label = '')
+ * @method Field\Select         select($column, $label = '')
+ * @method Field\MultipleSelect multipleSelect($column, $label = '')
+ */
 class Form extends Box
 {
     /**
@@ -26,16 +42,9 @@ class Form extends Box
     /**
      * Form field.
      *
-     * @var array
+     * @var Collection
      */
-    protected $fields = [];
-
-    /**
-     * Form hidden field.
-     *
-     * @var array
-     */
-    protected $hiddenFields = [];
+    protected $fields;
 
     /**
      * Width for label and field.
@@ -78,10 +87,126 @@ class Form extends Box
      */
     protected $column;
 
+    /**
+     * @var string
+     */
+    protected $enctype;
+
+    /**
+     * Available fields.
+     *
+     * @var array
+     */
+    protected static $availableFields = [
+        'text'           => Field\Text::class,
+        'hidden'         => Field\Hidden::class,
+        'html'           => Field\Html::class,
+        'number'         => Field\Number::class,
+        'switch'         => Field\SwitchField::class,
+        'display'        => Field\Display::class,
+        'textarea'       => Field\Textarea::class,
+        'select'         => Field\Select::class,
+        'multipleSelect' => Field\MultipleSelect::class,
+    ];
+
     public function __construct(Model $model)
     {
         $this->model = $model;
         $this->tools = new Tools();
+        $this->fields = new Collection();
+        static::$availableFields = array_merge(static::$availableFields, config('admin.availableFields', []));
+
+
+    }
+
+    public function model()
+    {
+        return $this->model;
+    }
+
+    /**
+     * @param Field $field
+     *
+     * @return $this
+     */
+    public function pushField(Field $field)
+    {
+        $this->getFields()->put($field->elementName(), $field);
+
+        return $this;
+    }
+
+    /**
+     * Find field class.
+     *
+     * @param string $method
+     *
+     * @return bool|mixed
+     */
+    public static function findFieldClass($method)
+    {
+        $class = Arr::get(static::$availableFields, $method, '');
+
+        if (class_exists($class)) {
+            return $class;
+        }
+
+        return false;
+    }
+
+    /**
+     * Set field and label width in current form.
+     *
+     * @param int $fieldWidth
+     * @param int $labelWidth
+     *
+     * @return $this
+     */
+    public function width($fieldWidth = 8, $labelWidth = 2)
+    {
+        $this->getFields()->each(function ($field) use ($fieldWidth, $labelWidth) {
+            /* @var Field $field  */
+            $field->width($fieldWidth, $labelWidth, true);
+        });
+
+        $this->width = [
+            'label' => $labelWidth,
+            'field' => $fieldWidth,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Get width of form.
+     *
+     * @return array
+     */
+    public function getWidth(string $key)
+    {
+        return $this->width[$key];
+    }
+
+    /**
+     * Generate a Field object and add to form builder if Field exists.
+     *
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @return Field
+     */
+    public function __call($method, $arguments)
+    {
+        if ($className = static::findFieldClass($method)) {
+            $column = Arr::get($arguments, 0, '');
+
+            $element = new $className($column, array_slice($arguments, 1), $this);
+            $this->pushField($element);
+
+            return $element;
+        }
+
+        throw new \Exception("Field type [$method] does not exist.");
     }
 
     /**
@@ -156,47 +281,16 @@ FOOTER;
     }
 
     /**
-    * @return array
+    * @return Collection
     */
     public function getFields()
     {
         return $this->fields;
     }
 
-    /**
-    * @return array
-    */
-    public function getHiddenFields()
+    public function getEnctype()
     {
-        return $this->hiddenFields;
-    }
-
-    /**
-     * Set width for field and label.
-     *
-     * @param int $field
-     * @param int $label
-     *
-     * @return $this
-     */
-    public function width(int $field = 8, int $label = 2)
-    {
-        $this->width = [
-            'label' => $label,
-            'field' => $field,
-        ];
-
-        return $this;
-    }
-
-    /**
-     * Get width for field and label.
-     *
-     * @return array
-     */
-    public function getWidth(string $key)
-    {
-        return $this->width[$key];
+        return $this->enctype ? sprintf('enctype="%"', $this->enctype) : '';
     }
 
     /**
@@ -234,241 +328,6 @@ FOOTER;
     }
 
     /**
-     * Get or set default value for field.
-     *
-     * @param mixed $default
-     *
-     * @return $this|mixed
-     */
-    public function default($value)
-    {
-        $this->fields[$this->column]['input'] = str_replace('#value#', "value={$value}", $this->fields[$this->column]['input']);
-        $this->fields[$this->column]['input'] = str_replace('#checked#', $value ? 'checked' : '', $this->fields[$this->column]['input']);
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function html(string $html, string $label = '')
-    {
-        $label = $label;
-        $column = 'column_' . Str::random(8);
-
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = [
-            'label' => $label,
-            'input' => $html
-        ];
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function text(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $value = '#value#';
-        if (isset($this->model->{$column}) && $this->model->{$column} !== '') {
-            $value = "value=" . $this->model->{$column};
-        }
-        $placeholder = trans('admin.input') . " " . ($label ?: $column);
-
-        $input = <<<INPUT
-            <div class="input-group">
-                <div class="input-group-addon">
-                    <i class="fa fa-pencil fa-fw"></i>
-                </div>
-                <input type="text" class="form-control" placeholder="{$placeholder}" name="{$column}" {$value} #disabled# #required#>
-            </div>
-INPUT;
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     *
-     * @return $this
-     */
-    public function hidden(string $column, $value)
-    {
-        $this->column = $column;
-
-        $input = <<<INPUT
-            <input type="hidden" name="{$column}" value="{$value}">
-INPUT;
-        $this->hiddenFields[$column] = compact('input');
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function number(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $value = '#value#';
-        if (isset($this->model->{$column}) && $this->model->{$column} !== '') {
-            $value = "value=" . $this->model->{$column};
-        }
-        $placeholder = trans('admin.input') . " " . ($label ?: $column);
-
-        $input = <<<INPUT
-            <div class="input-group">
-                <input class="form-control {$column}" type="text" name="{$column}" {$value} #min# #max# placeholder="{$placeholder}" style="width: 100px; text-align: center;" #required#>
-            </div>
-            <script>
-                $(function () {
-                    $('.{$column}:not(.initialized)')
-                        .addClass('initialized')
-                        .bootstrapNumber({
-                            upClass: 'success',
-                            downClass: 'primary',
-                            center: true
-                        });
-                })
-            </script>
-INPUT;
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function switch(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $checked = !empty($this->model->{$column}) ? "checked" : '#checked#';
-        $placeholder = trans('admin.input') . " " . ($label ?: $column);
-        $id = 'switch_' . Str::random(8);
-
-        $input = <<<INPUT
-            <input name="{$column}" type="hidden" value="0" />
-            <input id="{$id}" class="{$column}" type="checkbox" value="1" name="{$column}" #disabled# {$checked} />
-            <script>
-                $(function () {
-                    Switchery($('#{$id}')[0], {
-                        size: 'small',
-                        color: '#00a65a'
-                    });
-                })
-            </script>
-INPUT;
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * Set min value for number field.
-     *
-     * @param int $value
-     *
-     * @return $this
-     */
-    public function min(int $value)
-    {
-        $this->fields[$this->column]['input'] = str_replace('#min#', "min={$value}", $this->fields[$this->column]['input']);
-
-        return $this;
-    }
-
-    /**
-     * Set max value for number field.
-     *
-     * @param int $value
-     *
-     * @return $this
-     */
-    public function max(int $value)
-    {
-        $this->fields[$this->column]['input'] = str_replace('#max#', "max={$value}", $this->fields[$this->column]['input']);
-
-        return $this;
-    }
-
-    /**
-     * Set disabled attribute of the element.
-     *
-     * @param bool $disabled
-     *
-     * @return $this
-     */
-    public function disabled(bool $disabled = true)
-    {
-        if ($disabled) {
-            $this->fields[$this->column]['input'] = str_replace('#disabled#', 'disabled', $this->fields[$this->column]['input']);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $html
-     *
-     * @return $this
-     */
-    public function help(string $html)
-    {
-        $input = <<<INPUT
-            <span class="help-block">
-                <i class="fa fa-info-circle"></i>&nbsp;{$html}
-            </span>
-INPUT;
-        $this->fields[$this->column]['input'] .= $input;
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function textarea(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $value = $this->model->{$column} ?? '';
-        $placeholder = trans('admin.input') . " " . (empty($label) ? $column : $label);
-
-        $input = <<<INPUT
-            <textarea name="{$column}" class="form-control" rows="5" placeholder="{$placeholder}" #disabled# #required#>{$value}</textarea>
-INPUT;
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
      * @param string $column
      * @param string $label
      *
@@ -500,28 +359,6 @@ INPUT;
      *
      * @return $this
      */
-    public function display(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $value = $this->model->{$column} ?? '';
-
-        $input = <<<INPUT
-            <input type="text" class="form-control" disabled name="{$column}" value="{$value}">
-INPUT;
-
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
     public function listbox(string $column, string $label = '')
     {
         $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
@@ -535,89 +372,6 @@ INPUT;
 
         $label = $this->getLabel($column, $label);
         $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function select(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $placeholder = trans('admin.select') . " " . (empty($label) ? $column : $label);
-
-        $input = <<<INPUT
-            <select class="form-control {$column} select2-hidden-accessible" style="width: 100%;" data-placeholder="{$placeholder}" name="{$column}" #disabled# #required#>
-                <option></option>
-                #options#
-            </select>
-            <script>
-                $("select.{$column}").select2({"allowClear":true});
-            </script>
-INPUT;
-
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function multipleSelect(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $placeholder = trans('admin.select') . " " . (empty($label) ? $column : $label);
-
-        $input = <<<INPUT
-            <select class="form-control {$column} select2-hidden-accessible" style="width: 100%;" data-placeholder="{$placeholder}"
-                name="{$column}[]" multiple="multiple" #disabled# #required#>
-                <option></option>
-                #options#
-            </select>
-            <script>
-                $("select.{$column}").select2();
-            </script>
-INPUT;
-
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * @param array $options
-     * @param array $select     selected while model is empty
-     *
-     * @return $this
-     */
-    public function options(array $options = [], array $select = [])
-    {
-        $html = "";
-        foreach ($options as $key => $value) {
-            $selected = in_array($key, $select) ? 'selected' : '';
-            $html .= "<option value='{$key}' {$selected}>{$value}</option>";
-        }
-        $this->fields[$this->column]['input'] = str_replace('#options#', $html, $this->fields[$this->column]['input']);
-
-        return $this;
-    }
-
-    public function required()
-    {
-        $this->fields[$this->column]['label'] = str_replace('#required#', 'asterisk', $this->fields[$this->column]['label']);
-        $this->fields[$this->column]['input'] = str_replace('#required#', 'required', $this->fields[$this->column]['input']);
 
         return $this;
     }

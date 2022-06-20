@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace Oyhdd\Admin\Widget;
 
 use Hyperf\ViewEngine\Contract\Renderable;
-use Illuminate\Support\Collection;
+use Hyperf\Utils\Collection;
 
 class Tools implements Renderable
 {

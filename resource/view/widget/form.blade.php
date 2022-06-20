@@ -8,5 +8,7 @@
     </div>
     <!-- /.box-header -->
 
-    @include('widget.form.form')
+    <div class="box-body">
+        @include('widget.form.form')
+    </div>
 </div>

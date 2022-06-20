@@ -47,7 +47,11 @@
         </span>
         <script>
             $('.grid-tool-{{ $grid->getElementId() }} .grid-refresh').unbind('click').on('click', function () {
-                $.pjax.reload('#pjax-container');
+                // $.pjax.reload('#pjax-container');
+                $.pjax({
+                    url: '{{ $path }}' + '?_ha_no_animation=1',
+                    container: '#pjax-container'
+                });
                 toastr.success('{{ trans("admin.refresh_succeeded") }}');
             });
             $("#filter_{{ $grid->getElementId() }}").click(function () {
@@ -64,9 +68,9 @@
 
     <div class="box-body" style="overflow-x: scroll;overflow-y: hidden;padding:0;">
         @include('widget.grid.table', [
-            'id' => $grid->getElementId(),
+            'id'     => $grid->getElementId(),
             'header' => $grid->getColumns(),
-            'body' => $data,
+            'body'   => $data,
         ])
     </div>
     <!-- /.box-body -->

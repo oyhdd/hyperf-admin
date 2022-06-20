@@ -10,7 +10,7 @@
 
             <div class="lockscreen-item">
                 <div class="lockscreen-image">
-                    <img src="{{ admin_user()->avatar ?? config('admin.default_avatar') }}" alt="User Image">
+                    <img src="{{ admin_user()->avatar ?: config('admin.default_avatar') }}" alt="User Image">
                 </div>
 
                 <form class="lockscreen-credentials" action="{{ admin_url('auth/unlock') }}" method="post">

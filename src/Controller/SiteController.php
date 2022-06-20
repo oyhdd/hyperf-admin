@@ -17,6 +17,8 @@ class SiteController extends AdminController
             } else {
                 admin_toastr(trans('admin.update_failed'), 'error');
             }
+
+            return $this->redirect('auth/site/edit');
         }
 
         return $this->render('admin.auth.site', [

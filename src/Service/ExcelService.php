@@ -72,14 +72,15 @@ class ExcelService
         return ['path' => $outFilename, 'filename' => $fileName];
     }
 
-    public function saveToBrowser(string $fileName)
+    public function saveToBrowserByTmp(string $fileName)
     {
         $fileName = $fileName . '.xlsx';
         $writer = IOFactory::createWriter($this->spreadsheet, "Xlsx");
-        $writer->save("./tmp.xlsx");
+        $tmpPath = './' . $fileName;
+        $writer->save($tmpPath);
  
-        $content = file_get_contents('./tmp.xlsx');
-        unlink("./tmp.xlsx");
+        $content = file_get_contents($tmpPath);
+        unlink($tmpPath);
  
         $response = new Response();
         $contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';

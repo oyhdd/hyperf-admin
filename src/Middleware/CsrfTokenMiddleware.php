@@ -11,7 +11,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
-use Illuminate\Support\Str;
+use Hyperf\Utils\Str;
 use Illuminate\Hashing\BcryptHasher;
 
 class CsrfTokenMiddleware implements MiddlewareInterface
