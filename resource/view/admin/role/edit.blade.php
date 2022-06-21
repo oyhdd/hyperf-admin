@@ -10,6 +10,9 @@
     $form->display('id');
     $form->text('name')->required();
     $form->text('slug')->required();
+    $form->tree('permissions')->nodes(function () {
+        return make(config('admin.database.permission_model'))->query()->get();
+     })->expand();
     $form->display('created_at');
     $form->display('updated_at');
 

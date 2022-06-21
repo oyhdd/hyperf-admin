@@ -8,8 +8,10 @@
     $form = new \Oyhdd\Admin\Widget\Form\Form($model);
 
     $form->text('name')->required();
-    $form->text('slug');
-    // $form->treeSelect('permissions');
+    $form->text('slug')->required();
+    $form->tree('permissions')->nodes(function () {
+        return make(config('admin.database.permission_model'))->query()->get();
+     })->expand();
 
     $form->tools(function (\Oyhdd\Admin\Widget\Tools $tool) {
         $tool->showBack();

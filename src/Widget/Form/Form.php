@@ -25,6 +25,7 @@ use Oyhdd\Admin\Widget\Tools;
  * @method Field\Display        display($column, $label = '')
  * @method Field\Select         select($column, $label = '')
  * @method Field\MultipleSelect multipleSelect($column, $label = '')
+ * @method Field\Tree           tree($column, $label = '')
  */
 class Form extends Box
 {
@@ -109,6 +110,7 @@ class Form extends Box
         'textarea'       => Field\Textarea::class,
         'select'         => Field\Select::class,
         'multipleSelect' => Field\MultipleSelect::class,
+        'tree'           => Field\Tree::class,
     ];
 
     public function __construct(Model $model)

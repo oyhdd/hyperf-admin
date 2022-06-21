@@ -36,7 +36,7 @@ class Textarea extends Field
     }
 
     /**
-     * {@inheritdoc}
+     * Render this filed.
      */
     public function render()
     {
@@ -46,6 +46,5 @@ class Textarea extends Field
             ->defaultAttribute('style', 'resize:vertical;');
 
         return parent::render();
-
     }
 }

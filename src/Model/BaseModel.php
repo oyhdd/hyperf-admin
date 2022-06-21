@@ -29,23 +29,4 @@ class BaseModel extends Model
     {
     }
 
-    public function tree(array $selectedIds = [])
-    {
-        $models = $this->toArray();
-        $list = [];
-        foreach ($models as $model) {
-            $list[] = [
-                'id' => $model['id'],
-                'text' => $model['name'],
-                'parent' => $model['parent_id'] ?: '#',
-                'state' => [
-                    'disabled' => false,
-                    'selected' => in_array($model['id'], $selectedIds),
-                ]
-            ];
-        }
-
-        return $list;
-    }
-
 }

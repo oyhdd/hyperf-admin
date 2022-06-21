@@ -13,13 +13,6 @@ class Number extends Text
      */
     protected $view = 'widget.form.number';
 
-    public function render()
-    {
-        $this->prepend('')->defaultAttribute('style', 'width: 100px; text-align: center;');
-
-        return parent::render();
-    }
-
     /**
      * Set min value of number field.
      *
@@ -46,5 +39,15 @@ class Number extends Text
         $this->attribute('max', $value);
 
         return $this;
+    }
+
+    /**
+     * Render this filed.
+     */
+    public function render()
+    {
+        $this->prepend('')->defaultAttribute('style', 'width: 100px; text-align: center;');
+
+        return parent::render();
     }
 }

@@ -32,7 +32,7 @@ class RoleController extends AdminController
         if ($this->request->isMethod('post')) {
             $params = $this->request->all();
             if ($model->fill($params) && $model->save()) {
-                $model->permissions()->sync($params['permissions'] ?? []);
+                $model->permissions()->sync(explode(",", $params['permissions'] ?? ''));
                 admin_toastr(trans('admin.create_succeeded'));
 
                 return $this->redirect('auth/role');
@@ -57,7 +57,7 @@ class RoleController extends AdminController
         if ($this->request->isMethod('post')) {
             $params = $this->request->all();
             if ($model->fill($params) && $model->save()) {
-                $model->permissions()->sync($params['permissions'] ?? []);
+                $model->permissions()->sync(explode(",", $params['permissions'] ?? ''));
                 admin_toastr(trans('admin.update_succeeded'));
 
                 return $this->redirect('auth/role');
