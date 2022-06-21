@@ -42,7 +42,5 @@
 
             return false;
         });
-
-
     })
 </script>

@@ -10,7 +10,7 @@ class SiteController extends AdminController
      */
     public function edit()
     {
-        $model = make(config('admin.database.site_model'));
+        $model = $this->getModel();
         if ($this->request->isMethod('POST')) {
             if ($model->saveData($this->request->all())) {
                 admin_toastr(trans('admin.update_succeeded'));
@@ -24,6 +24,15 @@ class SiteController extends AdminController
         return $this->render('admin.auth.site', [
             'model' => $model,
         ]);
+    }
+
+
+    /**
+     * @return \Oyhdd\Admin\Model\AdminSite
+     */
+    protected function getModel()
+    {
+        return make(config('admin.database.site_model'));
     }
 
 }

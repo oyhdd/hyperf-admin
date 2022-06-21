@@ -16,6 +16,7 @@ use Oyhdd\Admin\Widget\Tools;
  * Class Form.
  *
  * @method Field\Text           text($column, $label = '')
+ * @method Field\Password       password($column, $label = '')
  * @method Field\Textarea       textarea($column, $label = '')
  * @method Field\Hidden         hidden($column, $label = '')
  * @method Field\Html           html($html, $label = '')
@@ -99,6 +100,7 @@ class Form extends Box
      */
     protected static $availableFields = [
         'text'           => Field\Text::class,
+        'password'       => Field\Password::class,
         'hidden'         => Field\Hidden::class,
         'html'           => Field\Html::class,
         'number'         => Field\Number::class,
@@ -327,87 +329,8 @@ FOOTER;
         return $this;
     }
 
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function password(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-        $placeholder = trans('admin.input') . " " . (empty($label) ? $column : $label);
-
-        $input = <<<INPUT
-            <div class="input-group">
-                <div class="input-group-addon">
-                    <i class="fa fa-eye-slash fa-fw"></i>
-                </div>
-                <input type="password" name="{$column}" class="form-control" placeholder="{$placeholder}" #required#>
-            </div>
-INPUT;
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    /**
-     * @param string $column
-     * @param string $label
-     *
-     * @return $this
-     */
-    public function listbox(string $column, string $label = '')
-    {
-        $label = $label ?: trans($this->model->getTable() . '.fields.' . $column);
-        $this->column = $column;
-
-        $input = <<<INPUT
-            <select class="duallistbox" multiple="multiple" name="{$column}[]" #required#>
-                #options#
-            </select>
-INPUT;
-
-        $label = $this->getLabel($column, $label);
-        $this->fields[$column] = compact('label', 'input');
-
-        return $this;
-    }
-
-    public function rules(string $rules)
-    {
-        $rules = explode('|', trim($rules, '|'));
-        foreach ($rules as $rule) {
-            switch ($rule) {
-                case 'required':
-                    $this->required();
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $label
-     *
-     * @return string
-     */
-    private function getLabel(string $column, string $label = ''): string
-    {
-        $value = empty($label) ? $column : $label;
-        $width = &$this->width['label'];
-
-        return "<label for='{$column}' class='#required# control-label col-sm-{$width}'>{$value}</label>";
-    }
-
     private function isCreating(): bool
     {
-        return $this->isCreating ?? ($this->isCreating = empty($this->model->toArray()));
+        return $this->isCreating ?? ($this->isCreating = empty($this->model->getKey()));
     }
 }

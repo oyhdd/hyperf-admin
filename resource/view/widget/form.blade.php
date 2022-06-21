@@ -1,3 +1,8 @@
+<style>
+    .box-body > form > .box-footer {
+        padding-bottom: 0 !important;
+    }
+</style>
 <div class="box box-{{ $form->style() }}">
     <div class="box-header with-border">
         <h3 class="box-title">{{ $form->title() }}</h3>
