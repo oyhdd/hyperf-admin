@@ -35,7 +35,7 @@ class Select extends Field
         if ($options instanceof Arrayable) {
             $this->options = $options->toArray();
         } elseif ($options instanceof Closure) {
-            $this->options = $options->call($this, $this->form->model());
+            $this->options = $options->call($this, $this->model);
         } else {
             $this->options = (array) $options;
         }

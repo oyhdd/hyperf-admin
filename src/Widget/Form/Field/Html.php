@@ -41,7 +41,7 @@ class Html extends Field
     public function render()
     {
         if ($this->html instanceof Closure) {
-            $this->html = $this->html->call($this->form->model(), $this->form);
+            $this->html = $this->html->call($this->model, $this->form);
         }
 
         return <<<EOT

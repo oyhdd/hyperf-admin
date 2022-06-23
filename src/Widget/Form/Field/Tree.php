@@ -132,7 +132,7 @@ class Tree extends Field
     public function nodes($nodes)
     {
         if ($nodes instanceof Closure) {
-            $this->nodes = $nodes->call($this->form->model());
+            $this->nodes = $nodes->call($this->model);
         } else {
             $this->nodes = (array) $nodes;
         }
@@ -155,7 +155,7 @@ class Tree extends Field
         $textColumn = $this->columnNames['text'];
         $parentColumn = $this->columnNames['parent'];
 
-        $value = array_column($value, $idColumn);
+        $value = array_column((array)$value, $idColumn);
         if (empty($this->nodes)) {
             return;
         }

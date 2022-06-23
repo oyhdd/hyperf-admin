@@ -13,10 +13,9 @@
     $form->text('avatar');
     $form->password('password');
     $form->password('password_confirmation');
-    $form->multipleSelect('roles')->options(
-        make(config('admin.database.role_model'))::all()->pluck('name', 'id')->toArray(),
-        array_column($model->roles->toArray(), 'id'),
-    );
+    $form->multipleSelect('roles')
+        ->options(make(config('admin.database.role_model'))::all()->pluck('name', 'id')->toArray())
+        ->value(array_column($model->roles->toArray(), 'id'));
     $form->display('created_at');
     $form->display('updated_at');
 

@@ -3,13 +3,20 @@
 declare (strict_types=1);
 namespace Oyhdd\Admin\Widget\Form;
 
-use Closure;
 use Hyperf\ViewEngine\Contract\Renderable;
 use Oyhdd\Admin\Widget\Form\Form;
 use function Hyperf\ViewEngine\view;
+use App\Model\Model;
 
 class Field implements Renderable
 {
+    /**
+     * View for field to render.
+     *
+     * @var string
+     */
+    protected $view = '';
+    
     /**
      * Column name.
      *
@@ -39,18 +46,11 @@ class Field implements Renderable
     protected $help = '';
 
     /**
-     * View for field to render.
+     * Model of the form.
      *
-     * @var string
+     * @var Model
      */
-    protected $view = '';
-
-    /**
-     * Parent form.
-     *
-     * @var Form
-     */
-    protected $form;
+    protected $model;
 
     /**
      * Form element name.
@@ -110,9 +110,9 @@ class Field implements Renderable
      * @param string $column
      * @param array  $arguments
      */
-    public function __construct($column, $arguments = [], $form = null)
+    public function __construct($column, $arguments = [], $model = null)
     {
-        $this->setForm($form);
+        $this->setModel($model);
 
         $this->column = $column;
         $this->label = $this->formatLabel($arguments);
@@ -132,8 +132,8 @@ class Field implements Renderable
             return $arguments[0];
         }
 
-        $label = trans($this->form->model()->getTable() . '.fields.' . $this->column);
-        return str_replace([$this->form->model()->getTable() . '.fields.', '_'], ['', ' '], $label);
+        $label = trans($this->model->getTable() . '.fields.' . $this->column);
+        return str_replace([$this->model->getTable() . '.fields.', '_'], ['', ' '], $label);
     }
 
     /**
@@ -181,10 +181,6 @@ class Field implements Renderable
             'width'       => $this->width,
             'column'      => $this->column,
             'required'    => $this->required,
-            // 'class'       => $this->class(),
-            // 'style'       => $this->style(),
-            // 'viewClass'   => $this->getViewElementClasses(),
-            // 'errorKey'    => $this->getErrorKey(),
         ]);
     }
 
@@ -333,7 +329,13 @@ class Field implements Renderable
     public function default($default = null)
     {
         if (is_null($default)) {
-            return $this->default ?: ($this->form->model()->{$this->column} ?? '');
+            if (!is_null($this->default)) {
+                return $this->default;
+            }
+            if (in_array($this->column, $this->model->getHidden())) {
+                return '';
+            }
+            return $this->model->{$this->column} ?? '';
         }
 
         $this->default = $default;
@@ -342,13 +344,13 @@ class Field implements Renderable
     }
 
     /**
-     * @param Form $form
+     * @param Model $model
      *
      * @return $this
      */
-    public function setForm($form = null)
+    public function setModel($model = null)
     {
-        $this->form = $form;
+        $this->model = $model;
 
         return $this;
     }

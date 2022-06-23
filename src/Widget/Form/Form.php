@@ -83,13 +83,6 @@ class Form extends Box
     protected $method = 'post';
 
     /**
-     * Current field name.
-     *
-     * @var string
-     */
-    protected $column;
-
-    /**
      * @var string
      */
     protected $enctype;
@@ -118,9 +111,8 @@ class Form extends Box
         $this->model = $model;
         $this->tools = new Tools();
         $this->fields = new Collection();
+
         static::$availableFields = array_merge(static::$availableFields, config('admin.availableFields', []));
-
-
     }
 
     public function model()
@@ -204,7 +196,7 @@ class Form extends Box
         if ($className = static::findFieldClass($method)) {
             $column = Arr::get($arguments, 0, '');
 
-            $element = new $className($column, array_slice($arguments, 1), $this);
+            $element = new $className($column, array_slice($arguments, 1), $this->model());
             $this->pushField($element);
 
             return $element;

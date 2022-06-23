@@ -46,6 +46,7 @@ Router::addGroup(admin_url(), function (){
         \Hyperf\Session\Middleware\SessionMiddleware::class,
         \Oyhdd\Admin\Middleware\CsrfTokenMiddleware::class,
         \Oyhdd\Admin\Middleware\AuthMiddleware::class,
+        \Oyhdd\Admin\Middleware\PermissionMiddleware::class,
         \Oyhdd\Admin\Middleware\LockMiddleware::class,
     ]
 ]);
