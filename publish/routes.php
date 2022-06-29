@@ -17,6 +17,7 @@ Router::addGroup(admin_url(), function (){
         Router::get('/logout', [\Oyhdd\Admin\Controller\AuthController::class, 'logout']);
         Router::get('/lock', [\Oyhdd\Admin\Controller\AuthController::class, 'lock']);
         Router::post('/unlock', [\Oyhdd\Admin\Controller\AuthController::class, 'unlock']);
+        Router::addRoute(['GET', 'POST'], '/setting', [\Oyhdd\Admin\Controller\AuthController::class, 'setting']);
         Router::addRoute(['GET', 'POST'], '/site/edit', [\Oyhdd\Admin\Controller\SiteController::class, 'edit']);
 
         // User

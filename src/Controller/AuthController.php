@@ -27,7 +27,7 @@ class AuthController extends AdminController
             $password = htmlspecialchars($this->request->input('password', ''));
             $remember = boolval($this->request->input('remember', 0));
 
-            $user = $this->getUserModel()->findByUsername($username);
+            $user = $this->getModel()->findByUsername($username);
             if (!empty($user) && $this->hash->check($password, $user->password)) {
                 $token = '';
                 if ($remember) {
@@ -43,7 +43,7 @@ class AuthController extends AdminController
         } elseif ($token = $this->request->cookie('token')) {
             // Auto Login by remember_token
             list($id, $remember_token) = explode(':', $token);
-            $user = $this->getUserModel()->findById(intval($id));
+            $user = $this->getModel()->findById(intval($id));
             if (!empty($user->remember_token) && $this->hash->check($user->remember_token, $remember_token)) {
                 $user->remember();
                 $this->session->set('admin_user', $user);
@@ -56,6 +56,36 @@ class AuthController extends AdminController
         }
 
         return $this->renderFull('admin.auth.login');
+    }
+
+    /**
+     * User setting
+     */
+    public function setting()
+    {
+        $model = admin_user();
+
+        if ($this->request->isMethod('post')) {
+            $params = $this->request->all();
+            if (!empty($params['password'])) {
+                if ($params['password'] !== $params['password_confirmation']) {
+                    return admin_toastr(trans('admin.password_confirm_failed'), 'error');
+                }
+                $params['password'] = $this->hash->make($params['password']);
+            } else {
+                unset($params['password']);
+            }
+            if ($model->fill($params) && $model->save()) {
+                admin_toastr(trans('admin.update_succeeded'));
+
+                return $this->redirect('auth/setting');
+            }
+            admin_toastr(trans('admin.update_failed'), 'error');
+        }
+
+        return $this->render('admin.auth.setting', [
+            'model' => $model,
+        ]);
     }
 
     /**
@@ -123,7 +153,7 @@ class AuthController extends AdminController
     /**
      * @return \Oyhdd\Admin\Model\AdminUser
      */
-    private function getUserModel()
+    private function getModel()
     {
         return make(config('admin.database.user_model'));
     }

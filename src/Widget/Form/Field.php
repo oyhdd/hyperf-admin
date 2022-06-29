@@ -100,8 +100,8 @@ class Field implements Renderable
      * @var array
      */
     protected $width = [
-        'label'    => 2,
-        'field'    => 8,
+        'label' => 2,
+        'field' => 8,
     ];
 
     /**
