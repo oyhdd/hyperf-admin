@@ -18,7 +18,6 @@ Router::addGroup(admin_url(), function (){
         Router::get('/lock', [\Oyhdd\Admin\Controller\AuthController::class, 'lock']);
         Router::post('/unlock', [\Oyhdd\Admin\Controller\AuthController::class, 'unlock']);
         Router::addRoute(['GET', 'POST'], '/setting', [\Oyhdd\Admin\Controller\AuthController::class, 'setting']);
-        Router::addRoute(['GET', 'POST'], '/site/edit', [\Oyhdd\Admin\Controller\SiteController::class, 'edit']);
 
         // User
         Router::addGroup('/user', function (){
@@ -39,6 +38,10 @@ Router::addGroup(admin_url(), function (){
             Router::get('/{id}', [\Oyhdd\Admin\Controller\RoleController::class, 'show']);
             Router::addRoute(['GET', 'POST'], '/{id}/edit', [\Oyhdd\Admin\Controller\RoleController::class, 'edit']);
         });
+
+        // Develop tool
+        Router::addGroup('/site', function (){
+            Router::addRoute(['GET', 'POST'], '/edit', [\Oyhdd\Admin\Controller\SiteController::class, 'edit']);
     });
 
 

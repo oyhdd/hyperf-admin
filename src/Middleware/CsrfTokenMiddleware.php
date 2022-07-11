@@ -12,7 +12,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface as HttpResponse;
 use Hyperf\Utils\Str;
-use Illuminate\Hashing\BcryptHasher;
+use HyperfExt\Hashing\Hash;
+
 
 class CsrfTokenMiddleware implements MiddlewareInterface
 {
@@ -27,22 +28,16 @@ class CsrfTokenMiddleware implements MiddlewareInterface
     protected $response;
 
     /**
-     * @var BcryptHasher
-     */
-    protected $hash;
-
-    /**
      * The URIs that should be excluded from CSRF verification.
      *
      * @var array
      */
     protected $except = [];
 
-    public function __construct(RequestInterface $request, HttpResponse $response, BcryptHasher $hash)
+    public function __construct(RequestInterface $request, HttpResponse $response)
     {
         $this->request  = $request;
         $this->response = $response;
-        $this->hash     = $hash;
 
         $this->except = config('admin.csrf_token.except', []);
     }
@@ -103,7 +98,7 @@ class CsrfTokenMiddleware implements MiddlewareInterface
         }
 
         if ($token = $this->request->cookie('XSRF-TOKEN', '')) {
-            return $this->hash->check(csrf_token(), $token);
+            return Hash::check(csrf_token(), $token);
         }
 
         return false;
@@ -117,7 +112,7 @@ class CsrfTokenMiddleware implements MiddlewareInterface
         return $response->withCookie(
             new Cookie(
                 'XSRF-TOKEN',
-                $this->hash->make(csrf_token()),
+                Hash::make(csrf_token()),
                 Carbon::now()->addSeconds(config('session.options.cookie_lifetime'))->getTimestamp(),
                 // '/' . config('admin.route.prefix'),
                 // config('session.options.domain') ?? $this->request->getUri()->getHost(),

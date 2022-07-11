@@ -56,7 +56,7 @@ class AdminMenu extends BaseModel
     public function roles(): BelongsToMany
     {
         $relatedModel = config('admin.database.role_model');
-        $pivotTable = config('admin.database.role_menu_table');
+        $pivotTable = config('admin.database.menu_role_table');
 
         return $this->belongsToMany($relatedModel, $pivotTable, 'menu_id', 'role_id')->withTimestamps();
     }

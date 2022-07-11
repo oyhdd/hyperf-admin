@@ -216,7 +216,7 @@ return [
         // Pivot table for table above.
         'role_user_table'       => 'admin_role_user',
         'role_permission_table' => 'admin_role_permission',
-        'role_menu_table'        => 'admin_role_menu',
+        'menu_role_table'       => 'admin_role_menu',
     ],
 
     'availableFields' => [

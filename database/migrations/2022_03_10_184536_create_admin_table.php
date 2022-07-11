@@ -45,8 +45,8 @@ class CreateAdminTable extends Migration
             $table->string('slug', 50)->unique();
             $table->string('http_method')->nullable();
             $table->text('http_path')->nullable();
-            $table->integer('order')->default(0);
             $table->bigInteger('parent_id')->default(0);
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
 
@@ -54,7 +54,7 @@ class CreateAdminTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('parent_id')->default(0);
             $table->integer('order')->default(0);
-            $table->string('title', 50);
+            $table->string('title', 50)->default('')->unique();
             $table->string('icon', 50)->nullable();
             $table->string('uri', 50)->nullable();
             $table->timestamps();
@@ -74,10 +74,10 @@ class CreateAdminTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create($this->config('database.role_menu_table'), function (Blueprint $table) {
-            $table->bigInteger('role_id');
+        Schema::create($this->config('database.menu_role_table'), function (Blueprint $table) {
             $table->bigInteger('menu_id');
-            $table->unique(['role_id', 'menu_id']);
+            $table->bigInteger('role_id');
+            $table->unique(['menu_id', 'role_id']);
             $table->timestamps();
         });
 
@@ -115,7 +115,7 @@ class CreateAdminTable extends Migration
         Schema::dropIfExists($this->config('database.menu_table'));
         Schema::dropIfExists($this->config('database.role_user_table'));
         Schema::dropIfExists($this->config('database.role_permission_table'));
-        Schema::dropIfExists($this->config('database.role_menu_table'));
+        Schema::dropIfExists($this->config('database.menu_role_table'));
         Schema::dropIfExists($this->config('database.operation_log_table'));
         Schema::dropIfExists($this->config('database.site_table'));
     }

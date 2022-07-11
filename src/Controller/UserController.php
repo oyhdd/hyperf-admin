@@ -3,17 +3,11 @@
 declare(strict_types=1);
 namespace Oyhdd\Admin\Controller;
 
-use Illuminate\Hashing\BcryptHasher;
-use Hyperf\Di\Annotation\Inject;
+use HyperfExt\Hashing\Hash;
 use Oyhdd\Admin\Model\DataProvider\ModelDataProvider;
 
 class UserController extends AdminController
 {
-    /**
-     * @Inject
-     * @var BcryptHasher
-     */
-    protected $hash;
 
     /**
      * List all models.
@@ -42,7 +36,7 @@ class UserController extends AdminController
             if ($params['password'] !== $params['password_confirmation']) {
                 return admin_toastr(trans('admin.password_confirm_failed'), 'error');
             }
-            $params['password'] = $this->hash->make($params['password']);
+            $params['password'] = Hash::make($params['password']);
             if ($model->fill($params) && $model->save()) {
                 $model->roles()->sync($params['roles'] ?? []);
                 admin_toastr(trans('admin.create_succeeded'));
@@ -72,7 +66,7 @@ class UserController extends AdminController
                 if ($params['password'] !== $params['password_confirmation']) {
                     return admin_toastr(trans('admin.password_confirm_failed'), 'error');
                 }
-                $params['password'] = $this->hash->make($params['password']);
+                $params['password'] = Hash::make($params['password']);
             } else {
                 unset($params['password']);
             }

@@ -28,7 +28,7 @@
         "hyperf/redis": "^2.2",
         "hyperf/paginator": "^2.2",
         "hyperf/validation": "^2.2",
-        "illuminate/hashing": "^9.5",
+        "hyperf-ext/hashing": "^2.2",
         "phpoffice/phpspreadsheet": "^1.23"
     },
     "require-dev": {

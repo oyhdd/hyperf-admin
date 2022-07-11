@@ -1,7 +1,8 @@
 <?php
 
 use Hyperf\Database\Seeders\Seeder;
-use Illuminate\Hashing\BcryptHasher;
+use Hyperf\DbConnection\Db;
+use HyperfExt\Hashing\Hash;
 
 class AdminTableSeeder extends Seeder
 {
@@ -12,7 +13,6 @@ class AdminTableSeeder extends Seeder
      */
     public function run()
     {
-        $hash = new BcryptHasher();
         $now = date('Y-m-d H:i:s');
 
         // Create a user.
@@ -20,16 +20,22 @@ class AdminTableSeeder extends Seeder
         $adminUserModel::truncate();
         $adminUserModel::create([
             'username' => 'admin',
-            'password' => $hash->make('123456'),
+            'password' => Hash::make('123456'),
             'name'     => 'Administrator',
         ]);
 
         // Create a role.
         $adminRoleModel = config('admin.database.role_model');
         $adminRoleModel::truncate();
-        $adminRoleModel::create([
-            'name' => 'Administrator',
-            'slug' => 'administrator',
+        $adminRoleModel::insert([
+            [
+                'name' => 'Administrator',
+                'slug' => 'administrator',
+            ],
+            [
+                'name' => 'Develop Tool',
+                'slug' => 'develop_tool',
+            ]
         ]);
 
         // add role to user.
@@ -68,7 +74,7 @@ class AdminTableSeeder extends Seeder
                 'http_method' => '',
                 'http_path'   => '/auth/user*',
                 'parent_id'   => 2,
-                'order'       => 3,
+                'order'       => 1,
                 'created_at'  => $now,
                 'updated_at'  => $now,
             ],
@@ -78,7 +84,7 @@ class AdminTableSeeder extends Seeder
                 'http_method' => '',
                 'http_path'   => '/auth/role*',
                 'parent_id'   => 2,
-                'order'       => 4,
+                'order'       => 2,
                 'created_at'  => $now,
                 'updated_at'  => $now,
             ],
@@ -88,7 +94,7 @@ class AdminTableSeeder extends Seeder
                 'http_method' => '',
                 'http_path'   => '/auth/permission*',
                 'parent_id'   => 2,
-                'order'       => 5,
+                'order'       => 3,
                 'created_at'  => $now,
                 'updated_at'  => $now,
             ],
@@ -98,10 +104,29 @@ class AdminTableSeeder extends Seeder
                 'http_method' => '',
                 'http_path'   => '/auth/menu*',
                 'parent_id'   => 2,
-                'order'       => 6,
+                'order'       => 4,
                 'created_at'  => $now,
                 'updated_at'  => $now,
             ],
+            [
+                'name'        => 'Develop Tool',
+                'slug'        => 'develop_tool',
+                'http_method' => '',
+                'http_path'   => '/auth/site/*',
+                'parent_id'   => 0,
+                'order'       => 3,
+                'created_at'  => $now,
+                'updated_at'  => $now,
+            ]
+        ]);
+
+        // add role to permission.
+        Db::table(config('admin.database.role_permission_table'))->truncate();
+        Db::table(config('admin.database.role_permission_table'))->insert([
+            'role_id' => 2,
+            'permission_id' => 7,
+            'created_at' => $now,
+            'updated_at' => $now
         ]);
 
         // Add default menus.
@@ -128,7 +153,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 2,
-                'order'      => 3,
+                'order'      => 1,
                 'title'      => 'user',
                 'icon'       => 'fa-users',
                 'uri'        => 'auth/user',
@@ -137,7 +162,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 2,
-                'order'      => 4,
+                'order'      => 2,
                 'title'      => 'role',
                 'icon'       => 'fa-user',
                 'uri'        => 'auth/role',
@@ -146,7 +171,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 2,
-                'order'      => 5,
+                'order'      => 3,
                 'title'      => 'permission',
                 'icon'       => 'fa-ban',
                 'uri'        => 'auth/permission',
@@ -155,7 +180,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 2,
-                'order'      => 6,
+                'order'      => 4,
                 'title'      => 'menu',
                 'icon'       => 'fa-bars',
                 'uri'        => 'auth/menu',
@@ -164,7 +189,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 2,
-                'order'      => 7,
+                'order'      => 5,
                 'title'      => 'operation_log',
                 'icon'       => 'fa-bars',
                 'uri'        => 'auth/operation',
@@ -173,7 +198,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 0,
-                'order'      => 8,
+                'order'      => 3,
                 'title'      => 'develop_tool',
                 'icon'       => 'fa-keyboard-o',
                 'uri'        => '',
@@ -182,7 +207,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 8,
-                'order'      => 9,
+                'order'      => 1,
                 'title'      => 'website_setting',
                 'icon'       => 'fa-cog',
                 'uri'        => 'auth/site/edit',
@@ -191,13 +216,36 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'parent_id'  => 8,
-                'order'      => 10,
+                'order'      => 2,
                 'title'      => 'scaffold',
                 'icon'       => 'fa-code',
                 'uri'        => 'auth/generate/new',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+        ]);
+
+        // add menu to role.
+        Db::table(config('admin.database.menu_role_table'))->truncate();
+        Db::table(config('admin.database.menu_role_table'))->insert([
+            [
+                'menu_id' => 8,
+                'role_id' => 2,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'menu_id' => 9,
+                'role_id' => 2,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'menu_id' => 10,
+                'role_id' => 2,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]
         ]);
 
         // Add default setting.

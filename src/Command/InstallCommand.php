@@ -62,6 +62,7 @@ class InstallCommand extends HyperfCommand
         $this->call('vendor:publish', ['package' => 'hyperf/session']);
         $this->call('vendor:publish', ['package' => 'hyperf/view-engine']);
         $this->call('vendor:publish', ['package' => 'hyperf/translation']);
+        $this->call('vendor:publish', ['package' => 'hyperf-ext/hashing']);
 
         // Publish assets files
         $this->fileSystem->copyDirectory(

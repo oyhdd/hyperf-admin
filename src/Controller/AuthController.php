@@ -4,18 +4,11 @@ declare(strict_types=1);
 namespace Oyhdd\Admin\Controller;
 
 use Carbon\Carbon;
-use Illuminate\Hashing\BcryptHasher;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpMessage\Cookie\Cookie;
+use HyperfExt\Hashing\Hash;
 
 class AuthController extends AdminController
 {
-    /**
-     * @Inject
-     * @var BcryptHasher
-     */
-    protected $hash;
-
     /**
      * Login
      */
@@ -28,11 +21,11 @@ class AuthController extends AdminController
             $remember = boolval($this->request->input('remember', 0));
 
             $user = $this->getModel()->findByUsername($username);
-            if (!empty($user) && $this->hash->check($password, $user->password)) {
+            if (!empty($user) && Hash::check($password, $user->password)) {
                 $token = '';
                 if ($remember) {
                     $user->remember();
-                    $token = sprintf("%s:%s", $user->id, $this->hash->make($user->remember_token));
+                    $token = sprintf("%s:%s", $user->id, Hash::make($user->remember_token));
                 }
 
                 $this->session->set('admin_user', $user);
@@ -44,10 +37,10 @@ class AuthController extends AdminController
             // Auto Login by remember_token
             list($id, $remember_token) = explode(':', $token);
             $user = $this->getModel()->findById(intval($id));
-            if (!empty($user->remember_token) && $this->hash->check($user->remember_token, $remember_token)) {
+            if (!empty($user->remember_token) && Hash::check($user->remember_token, $remember_token)) {
                 $user->remember();
                 $this->session->set('admin_user', $user);
-                $token = sprintf("%s:%s", $user->id, $this->hash->make($user->remember_token));
+                $token = sprintf("%s:%s", $user->id, Hash::make($user->remember_token));
 
                 return $this->response->withCookie($this->getTokenCookie($token))->redirect(admin_url());
             }
@@ -71,7 +64,7 @@ class AuthController extends AdminController
                 if ($params['password'] !== $params['password_confirmation']) {
                     return admin_toastr(trans('admin.password_confirm_failed'), 'error');
                 }
-                $params['password'] = $this->hash->make($params['password']);
+                $params['password'] = Hash::make($params['password']);
             } else {
                 unset($params['password']);
             }
@@ -107,7 +100,7 @@ class AuthController extends AdminController
         $user->lock();
 
         $content = $this->renderFull('admin.auth.lock');
-        $token = sprintf("%s:%s", $user->id, $this->hash->make($user->remember_token));
+        $token = sprintf("%s:%s", $user->id, Hash::make($user->remember_token));
 
         return $this->response->withCookie($this->getTokenCookie($token))->raw($content);
     }
@@ -120,10 +113,10 @@ class AuthController extends AdminController
         $password = htmlspecialchars($this->request->input('password', ''));
 
         $user = admin_user();
-        if (!empty($user) && $this->hash->check($password, $user->password)) {
+        if (!empty($user) && Hash::check($password, $user->password)) {
             $user->unlock()->remember();
             $this->session->set('admin_user', $user);
-            $token = sprintf("%s:%s", $user->id, $this->hash->make($user->remember_token));
+            $token = sprintf("%s:%s", $user->id, Hash::make($user->remember_token));
 
             return $this->response->withCookie($this->getTokenCookie($token))->redirect(admin_url());
         }

@@ -21,7 +21,7 @@
         <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <span class="hidden-xs">{{ $_data['user']->name }}</span>
-                <img src="{{ $_data['user']->avatar ?: config('admin.default_avatar') }}" class="user-image" alt="{{ $_data['user']->name ?? 'User Image' }}">
+                <img src="{{ $_data['user']->avatar ?: config('admin.default_avatar') }}" class="user-image">
             </a>
             <ul class="dropdown-menu">
                 <li class="dropdown-user-item">
