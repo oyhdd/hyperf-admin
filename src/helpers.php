@@ -79,7 +79,7 @@ if (!function_exists('admin_toastr')) {
     function admin_toastr(string $message = '', string $type = 'success'): void
     {
         $session = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\Contract\SessionInterface::class);
-        $toastr = new \Illuminate\Support\MessageBag(compact('message', 'type'));
+        $toastr = new \Hyperf\Utils\MessageBag(compact('message', 'type'));
 
         $session->flash('ha-toastr', $toastr);
     }
@@ -117,7 +117,7 @@ if (!function_exists('is_uri')) {
      */
     function is_uri($pattern, string $url): bool
     {
-        if (\Illuminate\Support\Str::is($pattern, rawurldecode($url))) {
+        if (\Hyperf\Utils\Str::is($pattern, rawurldecode($url))) {
             return true;
         }
 

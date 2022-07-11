@@ -4,9 +4,9 @@ declare (strict_types=1);
 namespace Oyhdd\Admin\Widget\Form;
 
 use Hyperf\ViewEngine\Contract\Renderable;
-use Oyhdd\Admin\Widget\Form\Form;
 use function Hyperf\ViewEngine\view;
 use App\Model\Model;
+use Hyperf\ViewEngine\T;
 
 class Field implements Renderable
 {
@@ -276,7 +276,7 @@ class Field implements Renderable
         $html = [];
 
         foreach ($this->attributes as $name => $value) {
-            $html[] = sprintf('%s="%s"', $name, e($value));
+            $html[] = sprintf('%s="%s"', $name, T::e($value));
         }
 
         return implode(' ', $html);

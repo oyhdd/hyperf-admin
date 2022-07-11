@@ -1,7 +1,7 @@
 @if($toastr = get_toastr())
     @php
-        $type    = \Illuminate\Support\Arr::get($toastr->get('type'), 0, 'success'); // success, info, error, warning
-        $message = \Illuminate\Support\Arr::get($toastr->get('message'), 0, '');
+        $type    = \Hyperf\Utils\Arr::get($toastr->get('type'), 0, 'success'); // success, info, error, warning
+        $message = \Hyperf\Utils\Arr::get($toastr->get('message'), 0, '');
         $timeout = (intval($_data['site']['toastr_timeout'] ?? 4)) * 1000;
     @endphp
 
