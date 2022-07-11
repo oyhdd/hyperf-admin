@@ -42,6 +42,7 @@ Router::addGroup(admin_url(), function (){
         // Develop tool
         Router::addGroup('/site', function (){
             Router::addRoute(['GET', 'POST'], '/edit', [\Oyhdd\Admin\Controller\SiteController::class, 'edit']);
+        });
     });
 
 
