@@ -3,9 +3,9 @@
 declare(strict_types=1);
 namespace Oyhdd\Admin\Command;
 
+use Psr\Container\ContainerInterface;
 use Hyperf\Command\Command as HyperfCommand;
 use Hyperf\Command\Annotation\Command;
-use Psr\Container\ContainerInterface;
 use Hyperf\Utils\Filesystem\Filesystem;
 
 /**
@@ -55,33 +55,10 @@ class InstallCommand extends HyperfCommand
     }
 
     /**
-     * Publish resource
+     * Publish route file
      */
     public function publish()
     {
-        $this->call('vendor:publish', ['package' => 'hyperf/session']);
-        $this->call('vendor:publish', ['package' => 'hyperf/view-engine']);
-        $this->call('vendor:publish', ['package' => 'hyperf/translation']);
-        $this->call('vendor:publish', ['package' => 'hyperf-ext/hashing']);
-
-        // Publish assets files
-        $this->fileSystem->copyDirectory(
-            dirname(dirname(__DIR__)) . '/resource/assets',
-            BASE_PATH . '/public/vendor/hyperf-admin'
-        );
-
-        // Publish language files
-        $this->fileSystem->copyDirectory(
-            dirname(dirname(__DIR__)) . '/resource/languages',
-            config('translation.path', BASE_PATH . '/storage/languages')
-        );
-
-        // Publish view files
-        $this->fileSystem->copyDirectory(
-            dirname(dirname(__DIR__)) . '/resource/view',
-            BASE_PATH . '/storage/view/'
-        );
-
         // Publish route file of Hyperf Admin
         $this->fileSystem->copy(
             dirname(dirname(__DIR__)) . '/publish/routes.php',
