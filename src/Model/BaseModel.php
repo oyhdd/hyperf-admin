@@ -25,8 +25,5 @@ class BaseModel extends Model
 
     }
 
-    protected function init()
-    {
-    }
-
+    protected function init() {}
 }

@@ -108,22 +108,6 @@ class RoleController extends AdminController
     }
 
     /**
-     * Export data to excel from model.
-     *
-     * @param $is_all
-     * @param $is_page
-     * @param $id
-     * @param $_perPage
-     * @param $_page
-     */
-    public function export()
-    {
-        $params = $this->request->all();
-
-        return $this->getModel()->export($params);
-    }
-
-    /**
      * @return \Oyhdd\Admin\Model\AdminRole
      */
     protected function getModel()

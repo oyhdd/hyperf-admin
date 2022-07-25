@@ -31,15 +31,27 @@ class AdminController
      */
     protected $session;
 
-
-    public function index()
+    /**
+     * Export data to excel from model.
+     *
+     * @param $is_all
+     * @param $is_page
+     * @param $id
+     * @param $_perPage
+     * @param $_page
+     */
+    public function export()
     {
-        return $this->render('index');
+        $params = $this->request->all();
+
+        return $this->getModel()->export($params);
     }
 
-    public function error()
+    /**
+     * @return \Oyhdd\Admin\Model\BaseModel
+     */
+    protected function getModel()
     {
-        return $this->render('common.error');
     }
 
     /**
