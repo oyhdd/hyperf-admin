@@ -146,7 +146,7 @@ class AuthController extends AdminController
     /**
      * @return \Oyhdd\Admin\Model\AdminUser
      */
-    private function getModel()
+    protected function getModel()
     {
         return make(config('admin.database.user_model'));
     }

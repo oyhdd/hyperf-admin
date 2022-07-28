@@ -16,7 +16,7 @@
         let submitBtn = form.find(':submit');
         form.submit(function (e) {
             e.preventDefault();
-            submitBtn.button('loading')
+            submitBtn.button('loading');
 
             $.ajax({
                 url: form.attr('action'),
@@ -24,11 +24,22 @@
                 data: form.serialize(),
                 success: function(ret) {
                     submitBtn.button('reset');
-                    if (ret.data && ret.data.redirect) {
-                        $.pjax({
-                            url: ret.data.redirect,
-                            container: '#pjax-container'
-                        });
+                    if (ret.data) {
+                        if (ret.data.toastr) {
+                            toastr.options = {
+                                closeButton: true,
+                                progressBar: true,
+                                showMethod: 'slideDown',
+                                timeOut: ret.data.toastr.timeout,
+                            };
+                            toastr[ret.data.toastr.type](ret.data.toastr.message);
+                        }
+                        if (ret.data.redirect) {
+                            $.pjax({
+                                url: ret.data.redirect,
+                                container: '#pjax-container'
+                            });
+                        }
                     }
                 },
                 error:function(xhq){
@@ -42,5 +53,5 @@
 
             return false;
         });
-    })
+    });
 </script>

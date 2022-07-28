@@ -34,7 +34,9 @@ class UserController extends AdminController
         if ($this->request->isMethod('post')) {
             $params = $this->request->all();
             if ($params['password'] !== $params['password_confirmation']) {
-                return admin_toastr(trans('admin.password_confirm_failed'), 'error');
+                admin_toastr(trans('admin.password_confirm_failed'), 'error');
+
+                return $this->responseJson();
             }
             $params['password'] = Hash::make($params['password']);
             if ($model->fill($params) && $model->save()) {
@@ -64,7 +66,9 @@ class UserController extends AdminController
             $params = $this->request->all();
             if (!empty($params['password'])) {
                 if ($params['password'] !== $params['password_confirmation']) {
-                    return admin_toastr(trans('admin.password_confirm_failed'), 'error');
+                    admin_toastr(trans('admin.password_confirm_failed'), 'error');
+
+                    return $this->responseJson();
                 }
                 $params['password'] = Hash::make($params['password']);
             } else {

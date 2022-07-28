@@ -7,6 +7,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Contract\SessionInterface;
+use Hyperf\Utils\Arr;
 
 use function Hyperf\ViewEngine\view;
 
@@ -101,6 +102,14 @@ class AdminController
      */
     protected function responseJson(array $data = [], int $code = 0, string $msg = 'success'): array
     {
+        if ($messageBag = get_toastr()) {
+            $site = make(config('admin.database.site_model'))->getAll();
+            $type    = Arr::get($messageBag->get('type'), 0, 'success');
+            $message = Arr::get($messageBag->get('message'), 0, '');
+            $timeout = (intval($site['toastr_timeout'] ?? 4)) * 1000;
+            $data['toastr'] = compact('type', 'message', 'timeout');
+        }
+
         return compact('code', 'msg', 'data');
     }
 
