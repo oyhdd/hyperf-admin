@@ -290,7 +290,7 @@ class AdminTableSeeder extends Seeder
             ],
             [
                 'key'        => 'toastr_timeout',
-                'value'      => 2,
+                'value'      => 4,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

@@ -93,7 +93,7 @@ if (!function_exists('get_toastr')) {
     {
         $session = \Hyperf\Utils\ApplicationContext::getContainer()->get(\Hyperf\Contract\SessionInterface::class);
 
-        return $session->get('ha-toastr');
+        return $session->remove('ha-toastr');
     }
 }
 
