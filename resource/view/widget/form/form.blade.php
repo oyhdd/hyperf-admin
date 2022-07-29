@@ -25,18 +25,18 @@
                 success: function(ret) {
                     submitBtn.button('reset');
                     if (ret.data) {
-                        if (ret.data.toastr) {
+                        if (ret.data._toastr) {
                             toastr.options = {
                                 closeButton: true,
                                 progressBar: true,
                                 showMethod: 'slideDown',
-                                timeOut: ret.data.toastr.timeout,
+                                timeOut: ret.data._toastr.timeout,
                             };
-                            toastr[ret.data.toastr.type](ret.data.toastr.message);
+                            toastr[ret.data._toastr.type](ret.data._toastr.message);
                         }
-                        if (ret.data.redirect) {
+                        if (ret.data._redirect) {
                             $.pjax({
-                                url: ret.data.redirect,
+                                url: ret.data._redirect,
                                 container: '#pjax-container'
                             });
                         }

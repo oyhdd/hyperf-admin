@@ -107,7 +107,7 @@ class AdminController
             $type    = Arr::get($messageBag->get('type'), 0, 'success');
             $message = Arr::get($messageBag->get('message'), 0, '');
             $timeout = (intval($site['toastr_timeout'] ?? 4)) * 1000;
-            $data['toastr'] = compact('type', 'message', 'timeout');
+            $data['_toastr'] = compact('type', 'message', 'timeout');
         }
 
         return compact('code', 'msg', 'data');
@@ -117,6 +117,6 @@ class AdminController
     {
         $redirect = admin_url($url);
 
-        return $this->responseJson(compact('redirect'));
+        return $this->responseJson(compact('_redirect'));
     }
 }

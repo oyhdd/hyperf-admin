@@ -7,29 +7,32 @@ use Hyperf\ViewEngine\Contract\Renderable;
 use function Hyperf\ViewEngine\view;
 use App\Model\Model;
 use Hyperf\ViewEngine\T;
+use Oyhdd\Admin\Widget\ModelTrait;
 
 class Field implements Renderable
 {
+    use ModelTrait;
+
     /**
      * View for field to render.
      *
      * @var string
      */
-    protected $view = '';
-    
+    protected $view;
+
     /**
      * Column name.
      *
      * @var string
      */
-    protected $column = '';
+    protected $column;
 
     /**
      * Element label.
      *
      * @var string
      */
-    protected $label = '';
+    protected $label;
 
     /**
      * Placeholder for this field.
@@ -43,7 +46,7 @@ class Field implements Renderable
      *
      * @var string
      */
-    protected $help = '';
+    protected $help;
 
     /**
      * Model of the form.
@@ -57,7 +60,7 @@ class Field implements Renderable
      *
      * @var string
      */
-    protected $elementName = '';
+    protected $elementName;
 
     /**
      * Field default value.
@@ -115,25 +118,8 @@ class Field implements Renderable
         $this->setModel($model);
 
         $this->column = $column;
-        $this->label = $this->formatLabel($arguments);
+        $this->label = $this->formatLabel($arguments[0] ?? '');
         $this->id = str_replace('.', '_', 'form_' . $column);
-    }
-
-    /**
-     * Format the label value.
-     *
-     * @param array $arguments
-     *
-     * @return string
-     */
-    protected function formatLabel($arguments = [])
-    {
-        if (isset($arguments[0])) {
-            return $arguments[0];
-        }
-
-        $label = trans($this->model->getTable() . '.fields.' . $this->column);
-        return str_replace([$this->model->getTable() . '.fields.', '_'], ['', ' '], $label);
     }
 
     /**
@@ -297,60 +283,6 @@ class Field implements Renderable
         } else {
             $this->attributes[$attribute] = (string) $value;
         }
-
-        return $this;
-    }
-
-    /**
-     * Get or set value of current field.
-     *
-     * @param mixed $value
-     *
-     * @return $this|mixed
-     */
-    public function value($value = null)
-    {
-        if (is_null($value)) {
-            return $this->value ?? $this->default();
-        }
-
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * Get or set default value of current field.
-     *
-     * @param mixed $default
-     *
-     * @return $this|mixed
-     */
-    public function default($default = null)
-    {
-        if (is_null($default)) {
-            if (!is_null($this->default)) {
-                return $this->default;
-            }
-            if (in_array($this->column, $this->model->getHidden())) {
-                return '';
-            }
-            return $this->model->{$this->column} ?? '';
-        }
-
-        $this->default = $default;
-
-        return $this;
-    }
-
-    /**
-     * @param Model $model
-     *
-     * @return $this
-     */
-    public function setModel($model = null)
-    {
-        $this->model = $model;
 
         return $this;
     }
