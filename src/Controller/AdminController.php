@@ -115,7 +115,7 @@ class AdminController
 
     protected function redirect(string $url): array
     {
-        $redirect = admin_url($url);
+        $_redirect = admin_url($url);
 
         return $this->responseJson(compact('_redirect'));
     }
